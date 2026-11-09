@@ -7,33 +7,79 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { ExerciseDef } from '../types/workout';
 import { createBiomechanicalRagdoll, createEnvironmentProps, RagdollNodes, EnvironmentProps } from './ragdollModel';
-import { animateExercisePose, FrameEvaluation } from './exerciseAnimations';
+import { animateExercisePose, resetRagdollPose, FrameEvaluation } from './exerciseAnimations';
 import { 
   Play, 
   Pause, 
   RotateCcw, 
-  Camera, 
-  Eye, 
-  Gauge, 
-  ShieldCheck, 
-  Zap,
-  Layers,
+  ShieldCheck,
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
 
 interface RagdollViewportProps {
   exercise: ExerciseDef;
-  onAngleUpdate?: (angle: number) => void;
   speedMultiplier?: number;
   isNightMode?: boolean;
 }
 
+const POSE_BONES = [
+  ['pelvis', 'Hips'], ['spine', 'Spine2'], ['head', 'Head'],
+  ['leftClavicle', 'LeftArm'], ['leftElbow', 'LeftForeArm'],
+  ['rightClavicle', 'RightArm'], ['rightElbow', 'RightForeArm'],
+  ['leftHip', 'LeftUpLeg'], ['leftKnee', 'LeftLeg'], ['leftAnkle', 'LeftFoot'],
+  ['rightHip', 'RightUpLeg'], ['rightKnee', 'RightLeg'], ['rightAnkle', 'RightFoot'],
+] as const;
+
+type PoseBone = {
+  bone: THREE.Bone;
+  source: THREE.Object3D;
+  sourceRestWorld: THREE.Quaternion;
+  targetRestWorld: THREE.Quaternion;
+  position: THREE.Vector3;
+};
+
+function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>, scale: number) {
+  POSE_BONES.forEach(([nodeName, boneName]) => {
+    const target = bones.get(boneName);
+    if (!target) return;
+    const sourceWorld = target.source.getWorldQuaternion(new THREE.Quaternion());
+    const worldDelta = sourceWorld.multiply(target.sourceRestWorld.clone().invert());
+    const desiredWorld = worldDelta.multiply(target.targetRestWorld);
+    target.bone.parent?.updateWorldMatrix(true, false);
+    const parentWorld = target.bone.parent?.getWorldQuaternion(new THREE.Quaternion()) ?? new THREE.Quaternion();
+    target.bone.quaternion.copy(parentWorld.invert().multiply(desiredWorld));
+    target.bone.updateWorldMatrix(false, true);
+  });
+  const hips = bones.get('Hips');
+  if (hips) {
+    hips.bone.position.set(
+      hips.position.x + ragdoll.pelvis.position.x * scale,
+      hips.position.y + (ragdoll.pelvis.position.y - 0.98) * scale,
+      hips.position.z + ragdoll.pelvis.position.z * scale,
+    );
+  }
+}
+
+function disposeModel(root: THREE.Object3D) {
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    object.geometry.dispose();
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    materials.forEach((material) => {
+      Object.values(material).forEach((value) => {
+        if (value instanceof THREE.Texture) value.dispose();
+      });
+      material.dispose();
+    });
+  });
+}
+
 export const RagdollViewport: React.FC<RagdollViewportProps> = ({
   exercise,
-  onAngleUpdate,
   speedMultiplier = 1.0,
   isNightMode = false,
 }) => {
@@ -42,6 +88,9 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
   // Estados de controle interativo
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
+  const [modelError, setModelError] = useState(false);
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [hasEmbeddedAnimation, setHasEmbeddedAnimation] = useState(false);
   const [activeSpeed, setActiveSpeed] = useState<number>(speedMultiplier);
   const [cameraPreset, setCameraPreset] = useState<'front' | 'side' | 'isometric' | 'top'>('side');
   const [showPinsHighlight, setShowPinsHighlight] = useState<boolean>(true);
@@ -51,15 +100,18 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     phaseLabel: 'Preparação',
     isContracting: false,
   });
-  const [isControlsExpanded, setIsControlsExpanded] = useState<boolean>(true);
+  const [isControlsExpanded, setIsControlsExpanded] = useState<boolean>(false);
 
   // Referências mutáveis para o loop de animação do Three.js
-  const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
   const ragdollRef = useRef<RagdollNodes | null>(null);
   const propsRef = useRef<EnvironmentProps | null>(null);
+  const poseBonesRef = useRef<Map<string, PoseBone>>(new Map());
+  const modelLoadedRef = useRef(false);
+  const modelScaleRef = useRef(1);
+  const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+  const embeddedAnimationRef = useRef(false);
   const progressRef = useRef<number>(0);
   const isPlayingRef = useRef<boolean>(true);
   const speedRef = useRef<number>(speedMultiplier);
@@ -144,15 +196,13 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     renderer.shadowMap.enabled = !isSoftwareGl;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
 
     container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
 
     // 3. Cena e Iluminação de Estúdio Biomecânico
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(isNightMode ? 0x0c0d10 : 0x0f141c);
-    sceneRef.current = scene;
 
     // Ambiente PBR com RoomEnvironment
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -234,8 +284,70 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
 
     // 5. Instanciação dos Modelos 3D
     const ragdoll = createBiomechanicalRagdoll();
+    resetRagdollPose(ragdoll);
     scene.add(ragdoll.root);
     ragdollRef.current = ragdoll;
+
+    let disposed = false;
+    new FBXLoader().load('/models/x-bot.fbx', (model) => {
+      if (disposed) {
+        disposeModel(model);
+        return;
+      }
+      const bounds = new THREE.Box3().setFromObject(model);
+      const size = bounds.getSize(new THREE.Vector3());
+      const center = bounds.getCenter(new THREE.Vector3());
+      model.scale.setScalar(1.65 / size.y);
+      modelScaleRef.current = model.scale.x;
+      model.position.set(-center.x * model.scale.x, -bounds.min.y * model.scale.y, -center.z * model.scale.z);
+      scene.add(model);
+      ragdoll.root.visible = false;
+      const clip = model.animations.find((animation) => animation.duration > 0.1 && animation.tracks.length > 0);
+      if (clip) {
+        mixerRef.current = new THREE.AnimationMixer(model);
+        mixerRef.current.clipAction(clip).play();
+        embeddedAnimationRef.current = true;
+        setHasEmbeddedAnimation(true);
+      }
+      const availableBones = new Map<string, THREE.Bone>();
+      model.traverse((object) => {
+        if (object instanceof THREE.SkinnedMesh && availableBones.size === 0) {
+          object.skeleton.bones.forEach((bone) => availableBones.set(bone.name.replace(/^mixamorig:?/i, ''), bone));
+        }
+      });
+      resetRagdollPose(ragdoll);
+      ragdoll.root.updateMatrixWorld(true);
+      model.updateMatrixWorld(true);
+      poseBonesRef.current = new Map(POSE_BONES.flatMap(([nodeName, boneName]) => {
+        const bone = availableBones.get(boneName);
+        const source = ragdoll[nodeName] as THREE.Object3D;
+        return bone ? [[boneName, {
+          bone,
+          source,
+          sourceRestWorld: source.getWorldQuaternion(new THREE.Quaternion()),
+          targetRestWorld: bone.getWorldQuaternion(new THREE.Quaternion()),
+          position: bone.position.clone(),
+        }] as const] : [];
+      }));
+      const missingBones = POSE_BONES.filter(([, boneName]) => !poseBonesRef.current.has(boneName));
+      if (missingBones.length) {
+        ragdoll.root.visible = true;
+        scene.remove(model);
+        disposeModel(model);
+        setIsModelLoaded(false);
+        modelLoadedRef.current = false;
+        setModelError(true);
+        return;
+      }
+      const target = controls.target;
+      target.set(0, 0.82, 0);
+      const direction = camera.position.clone().sub(controls.target).normalize();
+      camera.position.copy(target).addScaledVector(direction, 3.4);
+      controls.update();
+      setIsModelLoaded(true);
+      modelLoadedRef.current = true;
+      setModelError(false);
+    }, undefined, () => { setModelError(true); setIsModelLoaded(false); modelLoadedRef.current = false; });
 
     const envProps = createEnvironmentProps();
     scene.add(envProps.root);
@@ -245,6 +357,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     // 6. Loop de Renderização Contínuo e Paced
     let animationFrameId = 0;
     let lastTime = performance.now();
+    let lastUiUpdate = 0;
 
     const tick = () => {
       const now = performance.now();
@@ -255,7 +368,6 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
         // Velocidade base: 1 ciclo a cada 6 segundos (cadência 3-1-2)
         const cycleDuration = 6.0 / (speedRef.current || 1.0);
         progressRef.current = (progressRef.current + delta / cycleDuration) % 1.0;
-        setProgress(progressRef.current);
       }
 
       // Aplica rotações nos segmentos articulados do ragdoll
@@ -265,9 +377,11 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           progressRef.current,
           ragdollRef.current
         );
-        setFrameEval(ev);
-        if (onAngleUpdate) {
-          onAngleUpdate(ev.primaryAngleDegrees);
+        if (modelLoadedRef.current && !embeddedAnimationRef.current) applyExercisePose(ragdollRef.current, poseBonesRef.current, modelScaleRef.current);
+        if (now - lastUiUpdate >= 100) {
+          setFrameEval(ev);
+          setProgress(progressRef.current);
+          lastUiUpdate = now;
         }
 
         // Toggle visibilidade e contraste da perna operada (tíbia direita)
@@ -282,6 +396,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
       }
 
       controls.update();
+      if (isPlayingRef.current) mixerRef.current?.update(delta * speedRef.current);
       renderer.render(scene, camera);
 
       animationFrameId = requestAnimationFrame(tick);
@@ -303,8 +418,16 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      disposed = true;
       window.removeEventListener('resize', handleResize);
       controls.dispose();
+      poseBonesRef.current.clear();
+      mixerRef.current?.stopAllAction();
+      mixerRef.current = null;
+      embeddedAnimationRef.current = false;
+      modelLoadedRef.current = false;
+      disposeModel(scene);
+      scene.environment?.dispose();
       renderer.dispose();
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
@@ -320,9 +443,6 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     if (ragdollRef.current) {
       const ev = animateExercisePose(exerciseIdRef.current, val, ragdollRef.current);
       setFrameEval(ev);
-      if (onAngleUpdate) {
-        onAngleUpdate(ev.primaryAngleDegrees);
-      }
     }
   };
 
@@ -337,39 +457,20 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
       {/* Goniômetro Clínico e Metadados (Top Overlay Discreto) */}
       <div className="absolute top-4 left-4 right-4 flex items-start justify-between pointer-events-none z-10">
         {/* Painel Esquerdo: Goniômetro Digital */}
-        <div className="bg-slate-900/90 border border-slate-700/80 px-3.5 py-2.5 backdrop-blur-md flex items-center gap-4 pointer-events-auto">
+        <div className="max-w-[48%] bg-slate-900/90 border border-slate-700/80 px-3 py-2 backdrop-blur-md pointer-events-auto">
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">
-              {frameEval.primaryJointLabel}
+            <span className="text-xs font-semibold text-sky-400 truncate">
+              {hasEmbeddedAnimation ? 'Movimento do arquivo' : frameEval.phaseLabel.split(' (')[0].replace('Descida Excêntrica', 'Descendo').replace('Subida Concêntrica', 'Subindo').replace('Pausa no Assento', 'Pausa')}
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold font-mono text-sky-400 tabular-nums">
-                {frameEval.primaryAngleDegrees}°
-              </span>
-              <span className="text-xs text-slate-400 font-mono">
-                / {exercise.targetAngleRange}
-              </span>
-            </div>
-          </div>
-
-          <div className="h-7 w-px bg-slate-700" />
-
-          {/* Fase e Contração */}
-          <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">
-              Fase da Cadência
+            <span className="text-[10px] text-slate-400 truncate">
+              {modelError ? 'Demonstração original' : isModelLoaded ? hasEmbeddedAnimation ? 'X Bot · animação inclusa' : 'X Bot · movimento ilustrativo' : 'Carregando personagem…'}
             </span>
-            <div className="flex items-center gap-2">
-              <span className={`text-xs font-semibold ${frameEval.isContracting ? 'text-amber-400' : 'text-slate-200'}`}>
-                {frameEval.phaseLabel}
-              </span>
-            </div>
           </div>
         </div>
 
         {/* Painel Direito: Status Clínico do Implante & Câmera */}
         <div className="flex items-center gap-2 pointer-events-auto">
-          <button
+          {!isModelLoaded && <button
             onClick={() => setShowPinsHighlight(!showPinsHighlight)}
             className={`px-3 py-1.5 text-xs font-mono border flex items-center gap-1.5 transition-colors ${
               showPinsHighlight 
@@ -380,7 +481,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           >
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Perna com Pinos {showPinsHighlight ? 'Destacada' : 'Normal'}</span>
-          </button>
+          </button>}
 
           {/* Seletor de Câmera Biomecânica */}
           <div className="flex items-center bg-slate-900/90 border border-slate-700 p-0.5">
@@ -491,12 +592,12 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           </span>
         </div>
 
-        {/* Detalhes Expansíveis de Biomecânica e Segurança */}
+        {/* Detalhes Expansíveis do Exercício */}
         {isControlsExpanded && (
           <div className="max-w-4xl mx-auto mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
             <div className="bg-slate-950/70 p-2.5 border border-slate-800">
               <span className="text-[10px] text-sky-400 font-mono uppercase tracking-wider block mb-1">
-                Biomecânica & Músculos Ativados
+                Sobre o movimento
               </span>
               <p className="text-slate-300 leading-relaxed">
                 {exercise.subtitle}. Foco em {exercise.targetMuscles.map(m => m.replace('_', ' ')).join(', ')}.
@@ -505,10 +606,10 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
 
             <div className="bg-slate-950/70 p-2.5 border border-amber-900/40">
               <span className="text-[10px] text-amber-400 font-mono uppercase tracking-wider block mb-1">
-                Segurança Clínica para Implantes Metálicos
+                Orientação
               </span>
               <p className="text-amber-200/90 leading-relaxed">
-                {exercise.implantPrecautions}
+                Demonstração ilustrativa. Siga as orientações do profissional de saúde que acompanha você.
               </p>
             </div>
           </div>

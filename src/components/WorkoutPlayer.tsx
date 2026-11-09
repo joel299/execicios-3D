@@ -409,21 +409,16 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
                 <div className="bg-amber-950/30 border border-amber-800/50 p-3">
                   <div className="flex items-center gap-2 text-amber-400 font-mono text-[11px] uppercase tracking-wider mb-1">
                     <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>Critério Clínico do Implante</span>
+                    <span>Orientações</span>
                   </div>
                   <p className="text-amber-200/90 leading-relaxed">
-                    {currentExercise.implantPrecautions}
+                    As demonstrações são ilustrativas e não avaliam sua condição. Siga as orientações do profissional de saúde que acompanha você.
                   </p>
                 </div>
 
                 <div className="p-3 bg-slate-950 border border-slate-800 space-y-2 text-slate-400">
-                  <span className="font-semibold text-slate-200 block">Regra da Dor:</span>
-                  <p>
-                    Sensação de cansaço e queimação muscular é o objetivo fisiológico do fortalecimento.
-                  </p>
-                  <p className="text-rose-300/90">
-                    Dor em pontada aguda sobre a cicatriz cirúrgica ou parafusos metálicos exige interrupção imediata da amplitude.
-                  </p>
+                  <span className="font-semibold text-slate-200 block">Como usar esta demonstração</span>
+                  <p>Use as instruções como referência visual. Se sentir desconforto, pare e consulte seu profissional de saúde.</p>
                 </div>
               </div>
             )}

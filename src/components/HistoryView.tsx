@@ -64,10 +64,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
         <div>
           <span className="text-[10px] font-mono uppercase tracking-widest text-sky-400 block mb-1">
-            Persistência 100% Local (Sem Nuvem)
+            Seus registros neste navegador
           </span>
           <h2 className="text-xl md:text-2xl font-bold text-slate-100 tracking-tight">
-            Diário de Sintomas & Histórico de Treinos
+            Histórico de treinos
           </h2>
         </div>
 
@@ -107,7 +107,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
 
         <div className="bg-slate-900 border border-slate-800 p-4">
           <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-            Média da Escala EVA de Dor
+            Média de dor informada
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-bold font-mono text-emerald-400 tabular-nums">
@@ -121,7 +121,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       {/* Tabela de Registros de Sessões */}
       <div className="space-y-3">
         <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
-          Registros Clínicos Anteriores
+          Sessões anteriores
         </span>
 
         {sessions.length === 0 ? (
@@ -165,7 +165,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                     {/* Indicador de Dor EVA */}
                     <div className="text-right">
                       <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                        Dor EVA
+                        Dor informada
                       </span>
                       <span className={`text-sm font-bold font-mono ${item.painScore <= 3 ? 'text-emerald-400' : item.painScore <= 6 ? 'text-amber-400' : 'text-rose-400'}`}>
                         {item.painScore} / 10
@@ -175,7 +175,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                     {/* Status do Implante */}
                     <div className="text-right border-l border-slate-800 pl-4">
                       <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                        Pinos / Haste
+                        Região operada
                       </span>
                       <span className={`text-xs font-mono ${item.implantDiscomfort ? 'text-amber-400 font-semibold' : 'text-slate-400'}`}>
                         {item.implantDiscomfort ? 'Incômodo Referido' : 'Sem Pontadas'}

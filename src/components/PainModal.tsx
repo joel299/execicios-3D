@@ -25,13 +25,14 @@ export const PainModal: React.FC<PainModalProps> = ({
 }) => {
   const [painScore, setPainScore] = useState<number>(1);
   const [implantDiscomfort, setImplantDiscomfort] = useState<boolean>(false);
-  const [notes, setNotes] = useState<string>('Executado sem dor no trajeto da haste/parafusos. Amplitude normal.');
+  const [notes, setNotes] = useState<string>('');
+  const [saveError, setSaveError] = useState(false);
 
   const getPainLevelDescription = (score: number) => {
-    if (score === 0) return '0 · Ausência Completa de Dor (Conforto pleno)';
-    if (score <= 3) return `${score} · Desconforto Leve / Queimação Muscular Terapêutica (Seguro)`;
-    if (score <= 6) return `${score} · Dor Moderada / Atenção à Amplitude (Recomenda-se reduzir carga)`;
-    return `${score} · Dor Aguda / Sobrecarga Mecânica (Interromper ou rever exercício)`;
+    if (score === 0) return '0 · Sem dor';
+    if (score <= 3) return `${score} · Dor leve`;
+    if (score <= 6) return `${score} · Dor moderada`;
+    return `${score} · Dor intensa`;
   };
 
   const handleSave = () => {
@@ -43,6 +44,10 @@ export const PainModal: React.FC<PainModalProps> = ({
       notes,
       exercisesCompleted: completedExerciseIds,
     });
+    if (!session) {
+      setSaveError(true);
+      return;
+    }
     onSaved(session);
   };
 
@@ -54,10 +59,10 @@ export const PainModal: React.FC<PainModalProps> = ({
       <div className="w-full max-w-lg bg-slate-900 border border-slate-700 p-6 space-y-6 shadow-2xl">
         <div className="border-b border-slate-800 pb-3">
           <span className="text-[10px] font-mono uppercase tracking-widest text-sky-400 block mb-1">
-            Registro Clínico Pós-Treino
+            Registro pós-treino
           </span>
           <h2 className="text-xl font-bold text-slate-100 tracking-tight">
-            Conclusão da Sessão & Diário de Sintomas
+            Concluir treino e registrar como se sentiu
           </h2>
           <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mt-1">
             <span>Duração: {minutes}m {seconds}s</span>
@@ -66,10 +71,10 @@ export const PainModal: React.FC<PainModalProps> = ({
           </div>
         </div>
 
-        {/* Escala Visual Analógica (EVA 0 a 10) */}
+        {/* Nota de dor de 0 a 10 */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-slate-300 font-semibold">Escala EVA de Dor Articular:</span>
+            <span className="text-slate-300 font-semibold">Como você se sentiu?</span>
             <span className={`font-bold ${painScore <= 3 ? 'text-emerald-400' : painScore <= 6 ? 'text-amber-400' : 'text-rose-400'}`}>
               {painScore} / 10
             </span>
@@ -87,9 +92,9 @@ export const PainModal: React.FC<PainModalProps> = ({
 
           <div className="flex justify-between text-[10px] font-mono text-slate-500">
             <span>0 Sem Dor</span>
-            <span>3 Queimação Muscular</span>
-            <span>6 Dor Moderada</span>
-            <span>10 Máxima</span>
+            <span>3 Leve</span>
+            <span>6 Moderada</span>
+            <span>10 Intensa</span>
           </div>
 
           <div className="p-2.5 bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono">
@@ -97,10 +102,10 @@ export const PainModal: React.FC<PainModalProps> = ({
           </div>
         </div>
 
-        {/* Avaliação Específica do Implante e Pinos */}
+        {/* Registro de desconforto */}
         <div className="space-y-2 pt-2 border-t border-slate-800">
           <span className="text-xs font-mono text-slate-300 font-semibold block">
-            Interface Síntese Óssea / Pinos Metálicos:
+            Região operada
           </span>
           <label className="flex items-start gap-3 p-3 bg-slate-950 border border-slate-800 cursor-pointer hover:border-slate-700 transition-colors">
             <input
@@ -111,10 +116,10 @@ export const PainModal: React.FC<PainModalProps> = ({
             />
             <div className="text-xs">
               <span className="text-slate-200 font-medium block">
-                Senti pontada ou incômodo no trajeto dos pinos/parafusos
+                Senti desconforto na região operada
               </span>
               <span className="text-slate-500 text-[11px] block mt-0.5">
-                Marque se a dor foi localizada especificamente sobre o metal ou osso operado.
+                Marque se sentiu desconforto nessa região durante o treino.
               </span>
             </div>
           </label>
@@ -123,7 +128,7 @@ export const PainModal: React.FC<PainModalProps> = ({
         {/* Anotações Clínicas */}
         <div className="space-y-1.5 pt-2 border-t border-slate-800">
           <label className="text-xs font-mono text-slate-300 font-semibold block">
-            Observações Clínicas (Salvas Localmente):
+            Observações (salvas neste navegador):
           </label>
           <textarea
             value={notes}
@@ -136,6 +141,7 @@ export const PainModal: React.FC<PainModalProps> = ({
 
         {/* Botões de Ação */}
         <div className="flex items-center justify-end gap-3 pt-2">
+          {saveError && <p role="alert" className="mr-auto text-xs text-rose-300">Não foi possível salvar. Verifique o espaço disponível no navegador e tente novamente.</p>}
           <button
             onClick={onDismiss}
             className="px-4 py-2 text-xs font-mono text-slate-400 hover:text-slate-200 transition-colors"
@@ -148,7 +154,7 @@ export const PainModal: React.FC<PainModalProps> = ({
             className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition-colors"
           >
             <Check className="w-4 h-4" />
-            <span>Salvar no Histórico Local</span>
+            <span>Salvar registro</span>
           </button>
         </div>
       </div>

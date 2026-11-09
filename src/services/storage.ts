@@ -33,7 +33,7 @@ export const storageService = {
     }
   },
 
-  saveSession(session: Omit<WorkoutSessionLog, 'id' | 'timestamp'>): WorkoutSessionLog {
+  saveSession(session: Omit<WorkoutSessionLog, 'id' | 'timestamp'>): WorkoutSessionLog | null {
     const fullSession: WorkoutSessionLog = {
       ...session,
       id: 'ws_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
@@ -45,7 +45,7 @@ export const storageService = {
       existing.unshift(fullSession);
       localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(existing));
     } catch {
-      // Falha de quota ou privacidade
+      return null;
     }
 
     return fullSession;

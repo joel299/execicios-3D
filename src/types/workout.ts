@@ -48,7 +48,6 @@ export interface ExerciseDef {
   cadence: ExerciseCadence;
   description: string[];
   safetyTips: string[];
-  implantPrecautions: string;
   cameraPreset: 'front' | 'side' | 'isometric' | 'top';
   propType: 'mat' | 'chair' | 'towel' | 'wall' | 'pillow' | 'none';
 }

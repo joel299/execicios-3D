@@ -31,7 +31,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não force amplitudes que gerem pontadas nos parafusos de fixação.',
       'Mantenha respiração constante e ritmo moderado.'
     ],
-    implantPrecautions: 'Ideal para desobstruir a cápsula fibrosa e liberar aderências profundas ao redor da haste tibial.',
     cameraPreset: 'side',
     propType: 'chair'
   },
@@ -60,7 +59,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Se o calcanhar levantar do chão, recue ligeiramente o pé para não falsear a medição.',
       'Evite desvio em valgo (joelho colapsando para dentro).'
     ],
-    implantPrecautions: 'Mobilização em cadeia cinética fechada sem impacto sobre a estrutura consolidada.',
     cameraPreset: 'side',
     propType: 'wall'
   },
@@ -89,7 +87,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Mantenha a região lombar apoiada no chão, sem arquear a coluna.',
       'Execute o círculo apenas na amplitude em que não haja estalidos dolorosos.'
     ],
-    implantPrecautions: 'Alivia tensões na inserção do tensor da fáscia lata e estabiliza o alinhamento da perna.',
     cameraPreset: 'top',
     propType: 'mat'
   },
@@ -120,7 +117,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não tensione o pescoço ou ombros; a força deve ser puramente na coxa.',
       'Mantenha a contração constante sem oscilar a pressão.'
     ],
-    implantPrecautions: 'Fortalece o mecanismo extensor sem nenhum movimento de cisalhamento sobre os pinos metálicos.',
     cameraPreset: 'side',
     propType: 'towel'
   },
@@ -149,7 +145,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Se o joelho dobrar durante a subida, reduza a altura da elevação.',
       'Mantenha o abdômen suavemente contraído.'
     ],
-    implantPrecautions: 'Zero carga compressiva axial; o braço de alavanca fortalece o fêmur sem estresse de torção.',
     cameraPreset: 'side',
     propType: 'mat'
   },
@@ -179,7 +174,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Nunca despenque sobre a cadeira; o toque deve ser quase imperceptível.',
       'Garanta que os joelhos apontem na mesma direção da ponta dos pés.'
     ],
-    implantPrecautions: 'A cadeira atua como stop de segurança, impedindo flexão excessiva além de 90° e protegendo a integridade óssea.',
     cameraPreset: 'isometric',
     propType: 'chair'
   },
@@ -209,7 +203,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não hiperestenda a coluna lombar no topo; o movimento é puramente no quadril.',
       'Distribua o peso uniformemente nos dois calcanhares.'
     ],
-    implantPrecautions: 'Estabiliza a pelve, reduzindo torque compensatório nas articulações da tíbia e fêmur.',
     cameraPreset: 'side',
     propType: 'mat'
   },
@@ -238,7 +231,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não jogue o peso nas laterais dos pés; distribua a pressão entre o dedão e o segundo dedo.',
       'Evite balançar o corpo para frente e para trás.'
     ],
-    implantPrecautions: 'A panturrilha absorve grande parte do impacto da marcha diária, aliviando tensões sobre a tíbia operada.',
     cameraPreset: 'side',
     propType: 'wall'
   },
@@ -268,7 +260,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não aponte a ponta dos dedos para o teto, pois isso transfere o esforço para o flexor do quadril.',
       'Mantenha a pelve perpendicular ao solo.'
     ],
-    implantPrecautions: 'O glúteo médio é o principal músculo que mantém a bacia nivelada durante a caminhada, protegendo a perna operada.',
     cameraPreset: 'front',
     propType: 'mat'
   },
@@ -297,7 +288,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Nunca dê puxões bruscos; o alongamento deve ser contínuo e progressivo.',
       'Mantenha a coluna ereta sem encurvar excessivamente o tronco.'
     ],
-    implantPrecautions: 'Alívio passivo seguro que não sobrecarrega parafusos ou consolidações ósseas.',
     cameraPreset: 'side',
     propType: 'towel'
   },
@@ -326,7 +316,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não permita que os ombros saiam do chão.',
       'Interrompa se sentir formigamento ou pontadas neurais.'
     ],
-    implantPrecautions: 'Preserva a mobilidade do joelho e reduz forças de tração sobre o implante.',
     cameraPreset: 'side',
     propType: 'mat'
   },
@@ -355,7 +344,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Evite hiperventilar; respire devagar.',
       'Aproveite para perceber as sensações na perna fortalecida.'
     ],
-    implantPrecautions: 'Neutraliza qualquer estresse muscular residual do treino matinal.',
     cameraPreset: 'top',
     propType: 'mat'
   },
@@ -385,7 +373,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Se sentir formigamento nas pontas dos dedos, flexione ligeiramente os joelhos.',
       'Mantenha as costas e pescoço bem confortáveis.'
     ],
-    implantPrecautions: 'O implante metálico e tecidos circundantes tendem a reter líquido venoso ao longo do dia; essa postura descongestiona a perna sem esforço articular.',
     cameraPreset: 'side',
     propType: 'wall'
   },
@@ -416,7 +403,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não eleve o quadril do solo durante o aperto; mantenha a coluna neutra.',
       'Garanta força simétrica em ambas as pernas.'
     ],
-    implantPrecautions: 'Estabiliza a articulação femoropatelar e protege contra desvios laterais da tíbia.',
     cameraPreset: 'front',
     propType: 'pillow'
   },
@@ -445,7 +431,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Como este treino é executado perto da hora de dormir, o objetivo não é exaustão, mas alinhamento e tônus calmo.',
       'Mantenha respiração lenta e nasal.'
     ],
-    implantPrecautions: 'Ativa a cadeia posterior com baixo estresse metabólico, sem elevar a frequência cardíaca antes do sono.',
     cameraPreset: 'side',
     propType: 'mat'
   },
@@ -474,7 +459,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Não force o joelho contra o peito se houver desconforto no quadril flexionado.',
       'Mantenha a perna de baixo pesada contra o solo.'
     ],
-    implantPrecautions: 'Compensa o tempo sentado do dia a dia, diminuindo forças rotacionais na cabeça do fêmur.',
     cameraPreset: 'side',
     propType: 'mat'
   },
@@ -503,7 +487,6 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
       'Nunca force o joelho além do limite de conforto; use tantas almofadas de apoio quanto necessário.',
       'Solte todo o peso do corpo no solo.'
     ],
-    implantPrecautions: 'A almofada evita flexão profunda acima de 100°, protegendo a interface implante-osso com segurança clínica absoluta.',
     cameraPreset: 'side',
     propType: 'pillow'
   }

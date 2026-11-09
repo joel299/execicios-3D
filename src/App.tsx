@@ -19,13 +19,6 @@ import { storageService } from './services/storage';
 import { 
   Sun, 
   Moon, 
-  Play, 
-  BookOpen, 
-  History, 
-  ShieldCheck, 
-  Activity, 
-  Layers, 
-  CheckCircle,
   Clock,
   ArrowRight
 } from 'lucide-react';
@@ -107,12 +100,7 @@ export default function App() {
           onClick={() => setCurrentView('home')}
           className="flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
         >
-          <span className="text-base font-bold tracking-tight text-slate-100">
-            FisioLocal 3D
-          </span>
-          <span className="text-xs font-mono text-slate-500 hidden sm:inline">
-            · Reabilitação & Força
-          </span>
+          <span className="text-base font-bold tracking-tight text-slate-100">FisioLocal 3D</span>
         </div>
 
         {/* Zona 2: Links de Navegação em Texto Puro */}
@@ -131,7 +119,7 @@ export default function App() {
               currentView === 'library' ? 'text-sky-400 font-bold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Biblioteca 3D
+            Exercícios
           </button>
           <button
             onClick={() => setCurrentView('history')}
@@ -139,7 +127,7 @@ export default function App() {
               currentView === 'history' ? 'text-sky-400 font-bold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Diário de Sintomas
+            Histórico
           </button>
         </nav>
 
@@ -169,19 +157,12 @@ export default function App() {
               {/* Lado Esquerdo: Apresentação e Escolha dos Blocos de Treino */}
               <div className="flex-1 flex flex-col justify-between space-y-6">
                 <div>
-                  <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mb-2">
-                    <span>Programa Ortopédico</span>
-                    <span>·</span>
-                    <span className="text-sky-400">Pinos de Titânio & Síntese Óssea</span>
-                  </div>
-
                   <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-100 leading-tight">
-                    Fortalecimento Seguro sem Impacto com Ragdoll 3D
+                    Exercícios guiados com demonstração 3D
                   </h1>
 
                   <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-                    Instruções biomecânicas interativas com cadência 3-1-2 para reabilitação do membro inferior. 
-                    Projetado para preservar cartilagens e proteger a interface osso-implante com zero saltos e 100% de operação offline.
+                    Escolha uma rotina, acompanhe cada movimento e registre como se sentiu.
                   </p>
                 </div>
 
@@ -193,22 +174,22 @@ export default function App() {
                     className="p-5 bg-slate-900 border border-slate-800 hover:border-sky-500/80 cursor-pointer transition-all group"
                   >
                     <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-1.5">
-                      <span className="text-sky-400 font-bold uppercase tracking-wider">01. Bloco da Manhã</span>
+                      <span className="text-sky-400 font-bold uppercase tracking-wider">Rotina da manhã</span>
                       <span className="flex items-center gap-1 text-slate-300">
                         <Clock className="w-3.5 h-3.5" /> 60 minutos
                       </span>
                     </div>
 
                     <h2 className="text-base font-bold text-slate-100 group-hover:text-sky-300 transition-colors">
-                      Mobilidade Articular, Fortalecimento & Tônus Muscular
+                      Mobilidade e fortalecimento
                     </h2>
 
                     <p className="text-xs text-slate-400 mt-1">
-                      12 exercícios guiados: Alfabeto de tornozelo, Quad Sets, Elevação de perna reta (SLR), Box Squat e ponte de glúteos.
+                      12 exercícios com instruções passo a passo e demonstração animada.
                     </p>
 
                     <div className="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs font-mono">
-                      <span className="text-slate-500">Cadência 3-1-2 · Metrônomo Ativo</span>
+                      <span className="text-slate-500">Acompanhe o ritmo guiado</span>
                       <span className="text-sky-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Iniciar Sessão <ArrowRight className="w-3.5 h-3.5" />
                       </span>
@@ -221,22 +202,22 @@ export default function App() {
                     className="p-5 bg-slate-900 border border-slate-800 hover:border-amber-500/80 cursor-pointer transition-all group"
                   >
                     <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-1.5">
-                      <span className="text-amber-400 font-bold uppercase tracking-wider">02. Bloco da Noite (00:00 h)</span>
+                      <span className="text-amber-400 font-bold uppercase tracking-wider">Rotina da noite</span>
                       <span className="flex items-center gap-1 text-slate-300">
                         <Clock className="w-3.5 h-3.5" /> 30 minutos
                       </span>
                     </div>
 
                     <h2 className="text-base font-bold text-slate-100 group-hover:text-amber-300 transition-colors">
-                      Descompressão Postural, Drenagem de Edema & Relaxamento
+                      Movimentos leves para relaxar
                     </h2>
 
                     <p className="text-xs text-slate-400 mt-1">
-                      5 exercícios suaves: Pernas elevadas a 90° na parede com bomba venosa, aperto isométrico e descompressão lombar.
+                      5 exercícios com instruções e demonstrações animadas.
                     </p>
 
                     <div className="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs font-mono">
-                      <span className="text-slate-500">Modo Noturno Puro · Sem Estímulo Neural</span>
+                      <span className="text-slate-500">Rotina leve · ritmo guiado</span>
                       <span className="text-amber-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                         Iniciar Sessão Noturna <ArrowRight className="w-3.5 h-3.5" />
                       </span>
@@ -244,23 +225,16 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Diretrizes Clínicas Rápidas */}
-                <div className="p-3 bg-slate-950 border border-slate-800 text-xs text-slate-400 font-mono space-y-1">
-                  <div className="flex items-center gap-2 text-slate-300 font-semibold">
-                    <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
-                    <span>Princípios de Segurança Ortopédica:</span>
-                  </div>
-                  <p>
-                    1. Impacto Zero · 2. Tônus estabilizador adjacente · 3. Interrupção imediata em caso de dor nos pinos.
-                  </p>
-                </div>
+                <p className="text-xs text-slate-500">
+                  As demonstrações são ilustrativas. Siga as orientações do profissional de saúde que acompanha você.
+                </p>
               </div>
 
               {/* Lado Direito: Visualizador 3D Interativo do Exercício Piloto */}
               <div className="flex-1 flex flex-col h-[420px] lg:h-auto border border-slate-800 bg-slate-900 overflow-hidden">
                 <div className="p-3 border-b border-slate-800 bg-slate-950/70 flex items-center justify-between">
                   <span className="text-xs font-mono text-slate-400">
-                    Demonstração Biomecânica 3D Ragdoll
+                    Demonstração do exercício
                   </span>
                   <span className="text-xs font-mono text-sky-400 font-semibold">
                     Box Squat com Controle Articular

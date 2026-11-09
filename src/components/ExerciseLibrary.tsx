@@ -67,7 +67,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar por músculo, articulação ou exercício..."
+              placeholder="Buscar exercício..."
               className="w-full bg-slate-900 border border-slate-800 pl-9 pr-3 py-2 text-xs text-slate-200 font-mono placeholder:text-slate-500 focus:outline-none focus:border-sky-500"
             />
           </div>
@@ -151,11 +151,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
                   <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${isSelected ? 'text-sky-400 translate-x-0.5' : 'text-slate-600'}`} />
                 </div>
 
-                <div className="flex items-center gap-2 mt-2 text-[10px] font-mono text-slate-500">
-                  <span>{ex.primaryJoint}</span>
-                  <span>·</span>
-                  <span>Cadência {ex.cadence.eccentric}-{ex.cadence.isometric}-{ex.cadence.concentric}</span>
-                </div>
+                <p className="mt-2 text-[11px] text-slate-500">{ex.volume.restSeconds}s de descanso entre séries</p>
               </div>
             );
           })}
@@ -174,7 +170,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
         <div className="p-4 border-b border-slate-800 bg-slate-900 flex items-center justify-between shrink-0">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mb-1">
-              <span>Biomecânica 3D</span>
+              <span>Demonstração</span>
               <span>·</span>
               <span className="text-sky-400 font-semibold">{activeExercise.primaryJoint}</span>
             </div>
