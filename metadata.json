@@ -1,0 +1,6 @@
+{
+  "name": "FisioLocal 3D - Reabilitação e Força",
+  "description": "Simulador biomecânico 3D com ragdoll para exercícios de reabilitação e fortalecimento ortopédico com pinos, cadência auditiva e operação 100% offline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
