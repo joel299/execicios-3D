@@ -42,7 +42,10 @@ type PoseBone = {
   position: THREE.Vector3;
 };
 
-function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>) {
+function applyExercisePose(ragdoll: RagdollNodes, poseRoot: THREE.Group, bones: Map<string, PoseBone>) {
+  ragdoll.root.updateWorldMatrix(true, false);
+  poseRoot.position.copy(ragdoll.pelvis.getWorldPosition(new THREE.Vector3()));
+  poseRoot.quaternion.copy(ragdoll.root.getWorldQuaternion(new THREE.Quaternion()));
   POSE_BONES.forEach(([nodeName, boneName]) => {
     const target = bones.get(boneName);
     if (!target) return;
@@ -55,13 +58,6 @@ function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>) 
     target.bone.quaternion.copy(parentWorld.invert().multiply(desiredWorld));
     target.bone.updateWorldMatrix(false, true);
   });
-  const hips = bones.get('Hips');
-  if (hips) {
-    hips.bone.parent?.updateWorldMatrix(true, false);
-    hips.bone.position.copy(hips.bone.parent?.worldToLocal(
-      ragdoll.pelvis.getWorldPosition(new THREE.Vector3()),
-    ) ?? hips.position);
-  }
 }
 
 function disposeModel(root: THREE.Object3D) {
@@ -108,6 +104,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
   const ragdollRef = useRef<RagdollNodes | null>(null);
   const propsRef = useRef<EnvironmentProps | null>(null);
   const poseBonesRef = useRef<Map<string, PoseBone>>(new Map());
+  const poseRootRef = useRef<THREE.Group | null>(null);
   const modelLoadedRef = useRef(false);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const embeddedAnimationRef = useRef(false);
@@ -333,6 +330,25 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
       resetRagdollPose(ragdoll);
       ragdoll.root.updateMatrixWorld(true);
       model.updateMatrixWorld(true);
+      const hips = availableBones.get('Hips');
+      if (!hips) {
+        scene.remove(model);
+        disposeModel(model);
+        ragdoll.root.visible = true;
+        setIsModelLoaded(false);
+        modelLoadedRef.current = false;
+        setModelError(true);
+        return;
+      }
+      const pivot = hips.getWorldPosition(new THREE.Vector3());
+      const poseRoot = new THREE.Group();
+      poseRoot.position.copy(pivot);
+      scene.add(poseRoot);
+      scene.remove(model);
+      poseRoot.add(model);
+      model.position.sub(pivot);
+      poseRoot.updateMatrixWorld(true);
+      poseRootRef.current = poseRoot;
       poseBonesRef.current = new Map(POSE_BONES.flatMap(([nodeName, boneName]) => {
         const bone = availableBones.get(boneName);
         const source = ragdoll[nodeName] as THREE.Object3D;
@@ -347,7 +363,8 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
       const missingBones = POSE_BONES.filter(([, boneName]) => !poseBonesRef.current.has(boneName));
       if (missingBones.length) {
         ragdoll.root.visible = true;
-        scene.remove(model);
+        scene.remove(poseRoot);
+        poseRootRef.current = null;
         disposeModel(model);
         setIsModelLoaded(false);
         modelLoadedRef.current = false;
@@ -390,7 +407,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           progressRef.current,
           ragdollRef.current
         );
-        if (modelLoadedRef.current && !embeddedAnimationRef.current) applyExercisePose(ragdollRef.current, poseBonesRef.current);
+        if (modelLoadedRef.current && !embeddedAnimationRef.current && poseRootRef.current) applyExercisePose(ragdollRef.current, poseRootRef.current, poseBonesRef.current);
         if (now - lastUiUpdate >= 100) {
           setFrameEval(ev);
           setProgress(progressRef.current);
@@ -438,6 +455,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
       resizeObserver.disconnect();
       controls.dispose();
       poseBonesRef.current.clear();
+      poseRootRef.current = null;
       mixerRef.current?.stopAllAction();
       mixerRef.current = null;
       embeddedAnimationRef.current = false;
@@ -458,7 +476,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     setProgress(val);
     if (ragdollRef.current) {
       const ev = animateExercisePose(exerciseIdRef.current, val, ragdollRef.current);
-      if (modelLoadedRef.current && !embeddedAnimationRef.current) applyExercisePose(ragdollRef.current, poseBonesRef.current);
+      if (modelLoadedRef.current && !embeddedAnimationRef.current && poseRootRef.current) applyExercisePose(ragdollRef.current, poseRootRef.current, poseBonesRef.current);
       setFrameEval(ev);
     }
   };

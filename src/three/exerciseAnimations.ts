@@ -20,7 +20,9 @@ function smoothstep(min: number, max: number, value: number): number {
 
 function supine(ragdoll: RagdollNodes, z = 0) {
   ragdoll.root.rotation.x = -Math.PI / 2;
-  ragdoll.root.position.set(0, 0.08, 0.98 + z);
+  ragdoll.root.position.set(0, 0.20, 0.98 + z);
+  ragdoll.leftClavicle.rotation.x = 0.45;
+  ragdoll.rightClavicle.rotation.x = 0.45;
 }
 
 export function resetRagdollPose(ragdoll: RagdollNodes) {
@@ -163,8 +165,8 @@ export function animateExercisePose(
       supine(ragdoll);
 
       // Perna esquerda flexionada para proteger lombar
-      ragdoll.leftHip.rotation.x = -Math.PI / 3;
-      ragdoll.leftKnee.rotation.x = Math.PI / 2.5;
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 1.5;
 
       // Perna direita totalmente reta subindo a 45 graus
       let lift = 0;
@@ -257,9 +259,9 @@ export function animateExercisePose(
 
       // Pés apoiados firmes com joelhos dobrados
       ragdoll.leftHip.rotation.x = -0.4;
-      ragdoll.leftKnee.rotation.x = 0.9;
+      ragdoll.leftKnee.rotation.x = 1.5;
       ragdoll.rightHip.rotation.x = -0.4;
-      ragdoll.rightKnee.rotation.x = 0.9;
+      ragdoll.rightKnee.rotation.x = 1.5;
 
       let lift = 0;
       if (t < 0.4) {
@@ -276,7 +278,7 @@ export function animateExercisePose(
       }
 
       // Pelve sobe do chão até alinhar tronco e fêmur
-      ragdoll.root.position.y = 0.08 + lift * 0.04;
+      ragdoll.root.position.y = 0.20 + lift * 0.04;
 
       primaryAngleDegrees = Math.round(lift * 180);
       break;
@@ -317,7 +319,7 @@ export function animateExercisePose(
       primaryJointLabel = 'Abdução do Glúteo Médio';
       // Deitado de lado (rotação no eixo Z)
       ragdoll.root.rotation.z = Math.PI / 2;
-      ragdoll.root.position.set(0.98, 0.08, 0); // Deita de lado com o corpo apoiado no colchonete
+      ragdoll.root.position.set(0.98, 0.20, 0); // Deita de lado com o corpo apoiado no colchonete
 
       // Perna de baixo (esquerda) levemente flexionada para estabilidade
       ragdoll.leftHip.rotation.x = -0.3;
@@ -351,7 +353,7 @@ export function animateExercisePose(
       // Deitado com pernas a 90 graus na parede
       supine(ragdoll, 0.38);
 
-      // Quadris flexionados a 90° na parede
+      // Pernas estendidas e elevadas a 90° apoiadas na parede.
       ragdoll.leftHip.rotation.x = -Math.PI / 2;
       ragdoll.rightHip.rotation.x = -Math.PI / 2;
       ragdoll.leftKnee.rotation.x = 0;
@@ -373,10 +375,10 @@ export function animateExercisePose(
       primaryJointLabel = 'Compressão Isométrica Adutora';
       supine(ragdoll);
 
-      ragdoll.leftHip.rotation.x = -Math.PI / 2.3;
-      ragdoll.leftKnee.rotation.x = Math.PI / 2.3;
-      ragdoll.rightHip.rotation.x = -Math.PI / 2.3;
-      ragdoll.rightKnee.rotation.x = Math.PI / 2.3;
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 1.5;
+      ragdoll.rightHip.rotation.x = -0.4;
+      ragdoll.rightKnee.rotation.x = 1.5;
 
       let squeeze = 0;
       if (t < 0.2) {
@@ -431,8 +433,8 @@ export function animateExercisePose(
     case 'alongamento_isquiotibiais': {
       primaryJointLabel = 'Alongamento Posterior da Coxa';
       supine(ragdoll);
-      ragdoll.leftHip.rotation.x = -0.65;
-      ragdoll.leftKnee.rotation.x = 1.0;
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 1.5;
       ragdoll.rightHip.rotation.x = -0.8;
       ragdoll.rightKnee.rotation.x = 0.1;
       ragdoll.rightClavicle.rotation.x = -1.0;
@@ -445,10 +447,10 @@ export function animateExercisePose(
     case 'respiracao_diafragmatica': {
       primaryJointLabel = 'Respiração';
       supine(ragdoll);
-      ragdoll.leftHip.rotation.x = -0.35;
-      ragdoll.rightHip.rotation.x = -0.35;
-      ragdoll.leftKnee.rotation.x = 0.7;
-      ragdoll.rightKnee.rotation.x = 0.7;
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.rightHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 1.5;
+      ragdoll.rightKnee.rotation.x = 1.5;
       phaseLabel = 'Repouso deitado';
       break;
     }
@@ -456,12 +458,12 @@ export function animateExercisePose(
     case 'ponte_isometrica_baixa': {
       primaryJointLabel = 'Extensão Pélvica';
       supine(ragdoll);
-      ragdoll.leftHip.rotation.x = -0.35;
-      ragdoll.rightHip.rotation.x = -0.35;
-      ragdoll.leftKnee.rotation.x = 0.9;
-      ragdoll.rightKnee.rotation.x = 0.9;
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.rightHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 1.5;
+      ragdoll.rightKnee.rotation.x = 1.5;
       const lift = t < 0.25 ? smoothstep(0, 0.25, t) * 0.1 : 0.1;
-      ragdoll.root.position.y = 0.08 + lift * 0.02;
+      ragdoll.root.position.y = 0.20 + lift * 0.02;
       phaseLabel = lift ? 'Sustentação da ponte baixa' : 'Preparação da ponte';
       primaryAngleDegrees = Math.round(lift * 100);
       isContracting = lift > 0;
