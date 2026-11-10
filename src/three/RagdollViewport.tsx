@@ -39,16 +39,14 @@ type PoseBone = {
   source: THREE.Object3D;
   sourceRestWorld: THREE.Quaternion;
   targetRestWorld: THREE.Quaternion;
+  position: THREE.Vector3;
 };
 
 function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>) {
   POSE_BONES.forEach(([nodeName, boneName]) => {
     const target = bones.get(boneName);
     if (!target) return;
-    target.bone.parent?.updateWorldMatrix(true, false);
-    target.bone.position.copy(target.bone.parent?.worldToLocal(
-      target.source.getWorldPosition(new THREE.Vector3()),
-    ) ?? target.bone.position);
+    target.bone.position.copy(target.position);
     const sourceWorld = target.source.getWorldQuaternion(new THREE.Quaternion());
     const worldDelta = sourceWorld.multiply(target.sourceRestWorld.clone().invert());
     const desiredWorld = worldDelta.multiply(target.targetRestWorld);
@@ -57,6 +55,13 @@ function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>) 
     target.bone.quaternion.copy(parentWorld.invert().multiply(desiredWorld));
     target.bone.updateWorldMatrix(false, true);
   });
+  const hips = bones.get('Hips');
+  if (hips) {
+    hips.bone.parent?.updateWorldMatrix(true, false);
+    hips.bone.position.copy(hips.bone.parent?.worldToLocal(
+      ragdoll.pelvis.getWorldPosition(new THREE.Vector3()),
+    ) ?? hips.position);
+  }
 }
 
 function disposeModel(root: THREE.Object3D) {
@@ -336,6 +341,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           source,
           sourceRestWorld: source.getWorldQuaternion(new THREE.Quaternion()),
           targetRestWorld: bone.getWorldQuaternion(new THREE.Quaternion()),
+          position: bone.position.clone(),
         }] as const] : [];
       }));
       const missingBones = POSE_BONES.filter(([, boneName]) => !poseBonesRef.current.has(boneName));

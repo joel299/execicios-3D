@@ -19,11 +19,13 @@ function smoothstep(min: number, max: number, value: number): number {
 }
 
 function supine(ragdoll: RagdollNodes, z = 0) {
-  ragdoll.pelvis.position.set(0, 0.20, z);
-  ragdoll.pelvis.rotation.x = -Math.PI / 2;
+  ragdoll.root.rotation.x = -Math.PI / 2;
+  ragdoll.root.position.set(0, 0.08, 0.98 + z);
 }
 
 export function resetRagdollPose(ragdoll: RagdollNodes) {
+  ragdoll.root.position.set(0, 0, 0);
+  ragdoll.root.rotation.set(0, 0, 0);
   // Posição ereta padrão (em pé) do manequim clássico torneado
   ragdoll.pelvis.position.set(0, 0.98, 0);
   ragdoll.pelvis.rotation.set(0, 0, 0);
@@ -254,10 +256,10 @@ export function animateExercisePose(
       supine(ragdoll);
 
       // Pés apoiados firmes com joelhos dobrados
-      ragdoll.leftHip.rotation.x = -Math.PI / 2.2;
-      ragdoll.leftKnee.rotation.x = Math.PI / 2.2;
-      ragdoll.rightHip.rotation.x = -Math.PI / 2.2;
-      ragdoll.rightKnee.rotation.x = Math.PI / 2.2;
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 0.9;
+      ragdoll.rightHip.rotation.x = -0.4;
+      ragdoll.rightKnee.rotation.x = 0.9;
 
       let lift = 0;
       if (t < 0.4) {
@@ -274,9 +276,7 @@ export function animateExercisePose(
       }
 
       // Pelve sobe do chão até alinhar tronco e fêmur
-      ragdoll.pelvis.position.z = lift * 0.32;
-      ragdoll.leftHip.rotation.x = -(Math.PI / 2.2) * (1 - lift);
-      ragdoll.rightHip.rotation.x = -(Math.PI / 2.2) * (1 - lift);
+      ragdoll.root.position.y = 0.08 + lift * 0.04;
 
       primaryAngleDegrees = Math.round(lift * 180);
       break;
@@ -305,7 +305,6 @@ export function animateExercisePose(
         phaseLabel = 'Descida Excêntrica Lenta (3s)';
       }
 
-      ragdoll.pelvis.position.y = 0.95 + rise * 0.12;
       ragdoll.leftAnkle.rotation.x = rise * 0.65; // ~38 graus
       ragdoll.rightAnkle.rotation.x = rise * 0.65;
 
@@ -317,8 +316,8 @@ export function animateExercisePose(
     case 'abducao_deitado': {
       primaryJointLabel = 'Abdução do Glúteo Médio';
       // Deitado de lado (rotação no eixo Z)
-      ragdoll.pelvis.position.set(0, 0.15, 0);
-      ragdoll.pelvis.rotation.z = Math.PI / 2; // Decúbito lateral esquerdo
+      ragdoll.root.rotation.z = Math.PI / 2;
+      ragdoll.root.position.set(0.98, 0.08, 0); // Deita de lado com o corpo apoiado no colchonete
 
       // Perna de baixo (esquerda) levemente flexionada para estabilidade
       ragdoll.leftHip.rotation.x = -0.3;
@@ -350,7 +349,7 @@ export function animateExercisePose(
     case 'drenagem_postural': {
       primaryJointLabel = 'Bomba Muscular Venosa';
       // Deitado com pernas a 90 graus na parede
-      supine(ragdoll, -0.35);
+      supine(ragdoll, 0.38);
 
       // Quadris flexionados a 90° na parede
       ragdoll.leftHip.rotation.x = -Math.PI / 2;
@@ -414,7 +413,7 @@ export function animateExercisePose(
 
     case 'alongamento_toalha_panturrilha': {
       primaryJointLabel = 'Alongamento da Panturrilha';
-      ragdoll.pelvis.position.set(0, 0.52, -0.12);
+      ragdoll.pelvis.position.set(0, 0.28, -0.12);
       ragdoll.leftHip.rotation.x = -Math.PI / 2;
       ragdoll.rightHip.rotation.x = -Math.PI / 2;
       ragdoll.leftKnee.rotation.x = 0;
@@ -457,12 +456,12 @@ export function animateExercisePose(
     case 'ponte_isometrica_baixa': {
       primaryJointLabel = 'Extensão Pélvica';
       supine(ragdoll);
-      ragdoll.leftHip.rotation.x = -0.65;
-      ragdoll.rightHip.rotation.x = -0.65;
-      ragdoll.leftKnee.rotation.x = 1.1;
-      ragdoll.rightKnee.rotation.x = 1.1;
+      ragdoll.leftHip.rotation.x = -0.35;
+      ragdoll.rightHip.rotation.x = -0.35;
+      ragdoll.leftKnee.rotation.x = 0.9;
+      ragdoll.rightKnee.rotation.x = 0.9;
       const lift = t < 0.25 ? smoothstep(0, 0.25, t) * 0.1 : 0.1;
-      ragdoll.pelvis.position.y += lift;
+      ragdoll.root.position.y = 0.08 + lift * 0.02;
       phaseLabel = lift ? 'Sustentação da ponte baixa' : 'Preparação da ponte';
       primaryAngleDegrees = Math.round(lift * 100);
       isContracting = lift > 0;
@@ -485,7 +484,7 @@ export function animateExercisePose(
 
     case 'postura_da_crianca': {
       primaryJointLabel = 'Flexão de Quadril';
-      ragdoll.pelvis.position.set(0, 0.48, 0);
+      ragdoll.pelvis.position.set(0, 0.40, 0);
       ragdoll.leftHip.rotation.x = -0.8;
       ragdoll.rightHip.rotation.x = -0.8;
       ragdoll.leftKnee.rotation.x = 1.2;
