@@ -9,6 +9,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
   // --- BLOCO DA MANHÃ (60 MINUTOS) ---
   'tornozelo_alfabeto': {
     id: 'tornozelo_alfabeto',
+    videoId: 'CKAgzwCRofU',
     name: 'Desenhar o Alfabeto com o Pé',
     subtitle: 'Movimente o tornozelo em todas as direções',
     category: 'aquecimento',
@@ -37,6 +38,8 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'dorsiflexao_parede': {
     id: 'dorsiflexao_parede',
+    videoId: 'X15kOTm_5lw',
+    videoStartSeconds: 31,
     name: 'Levar o Joelho até a Parede',
     subtitle: 'Alongue a panturrilha sem tirar o calcanhar do chão',
     category: 'aquecimento',
@@ -65,6 +68,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'circulos_quadril': {
     id: 'circulos_quadril',
+    videoId: 'qPMgxcwvOPE',
     name: 'Círculos com o Quadril',
     subtitle: 'Movimente o quadril de forma suave, deitado de costas',
     category: 'aquecimento',
@@ -93,6 +97,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'extensao_isometrica_quad': {
     id: 'extensao_isometrica_quad',
+    videoId: 'IF5eDfb8afM',
     name: 'Apertar a Toalha com a Coxa',
     subtitle: 'Ative a coxa mantendo a perna esticada',
     category: 'fortalecimento',
@@ -123,6 +128,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'slr_elevacao_perna': {
     id: 'slr_elevacao_perna',
+    videoId: 'nWt-lTSUPso',
     name: 'Elevação da Perna Esticada',
     subtitle: 'Fortaleça a coxa sem dobrar o joelho',
     category: 'fortalecimento',
@@ -151,6 +157,8 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'box_squat_cadeira': {
     id: 'box_squat_cadeira',
+    videoId: 'H5VYU6t_w9o',
+    videoStartSeconds: 20,
     name: 'Sentar e Levantar da Cadeira',
     subtitle: 'Pratique o movimento com calma e controle',
     category: 'fortalecimento',
@@ -180,6 +188,8 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'ponte_gluteo': {
     id: 'ponte_gluteo',
+    videoId: 'di0rnIOloJg',
+    videoStartSeconds: 16,
     name: 'Ponte de Quadril',
     subtitle: 'Fortaleça os glúteos e a parte de trás das coxas',
     category: 'fortalecimento',
@@ -209,6 +219,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'panturrilha_apoio': {
     id: 'panturrilha_apoio',
+    videoId: 'lJ_VgvuLlS4',
     name: 'Subida na Ponta dos Pés com Apoio',
     subtitle: 'Fortaleça as panturrilhas com apoio para o equilíbrio',
     category: 'fortalecimento',
@@ -237,6 +248,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'abducao_deitado': {
     id: 'abducao_deitado',
+    videoId: 'g9FtnmsIYgI',
     name: 'Elevação Lateral da Perna Deitado',
     subtitle: 'Fortaleça o lado do quadril',
     category: 'fortalecimento',
@@ -266,6 +278,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'alongamento_toalha_panturrilha': {
     id: 'alongamento_toalha_panturrilha',
+    videoId: 'gC0P_URp1Ko',
     name: 'Alongar a Panturrilha com Toalha',
     subtitle: 'Alongue a panturrilha sentado, sem puxar com força',
     category: 'volta_calma',
@@ -294,6 +307,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'alongamento_isquiotibiais': {
     id: 'alongamento_isquiotibiais',
+    videoId: 'n78PS4zq3D8',
     name: 'Alongar a Parte de Trás da Coxa',
     subtitle: 'Alongue a coxa deitado de costas',
     category: 'volta_calma',
@@ -351,6 +365,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
   // --- BLOCO DA NOITE (30 MINUTOS / 00:00 H) ---
   'drenagem_postural': {
     id: 'drenagem_postural',
+    videoId: 'gB7hmaUpvFM',
     name: 'Movimentar os Pés com as Pernas na Parede',
     subtitle: 'Descanse com as pernas apoiadas e movimente os pés',
     category: 'drenagem',
@@ -378,6 +393,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'aperto_travesseiro': {
     id: 'aperto_travesseiro',
+    videoId: 'ouuk6Ju_f9U',
     name: 'Apertar o Travesseiro entre os Joelhos',
     subtitle: 'Fortaleça a parte interna das coxas',
     category: 'isometria',
@@ -408,6 +424,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'ponte_isometrica_baixa': {
     id: 'ponte_isometrica_baixa',
+    videoId: 'di0rnIOloJg',
     name: 'Ponte Baixa com Sustentação',
     subtitle: 'Mantenha o quadril um pouco elevado por alguns segundos',
     category: 'isometria',
@@ -436,6 +453,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'alongamento_flexores_quadril': {
     id: 'alongamento_flexores_quadril',
+    videoId: 'Crkttfw6lwk',
     name: 'Alongamento da Parte da Frente do Quadril',
     subtitle: 'Alongue a parte da frente do quadril deitado',
     category: 'alongamento',
@@ -464,6 +482,7 @@ export const EXERCISE_DATABASE: Record<string, ExerciseDef> = {
 
   'postura_da_crianca': {
     id: 'postura_da_crianca',
+    videoId: 'NRndzXZHPl8',
     name: 'Postura de Descanso com Almofada',
     subtitle: 'Relaxe as costas e os quadris com apoio',
     category: 'alongamento',

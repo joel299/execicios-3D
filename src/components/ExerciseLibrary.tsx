@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { EXERCISE_DATABASE, MORNING_ROUTINE_IDS, NIGHT_ROUTINE_IDS } from '../data/exercises';
 import { EXERCISE_CATEGORY_LABELS, ExerciseDef } from '../types/workout';
+import { ExerciseReferenceVideo } from './ExerciseReferenceVideo';
 import { RagdollViewport } from '../three/RagdollViewport';
 import { 
   Play, 
@@ -191,11 +192,16 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
         </div>
 
         {/* Viewport 3D do Exercício */}
-        <div className="flex-1 min-h-0 relative">
-          <RagdollViewport
-            exercise={activeExercise}
-            isNightMode={isNightMode}
-          />
+        <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)] overflow-y-auto xl:overflow-hidden">
+          <div className="h-[60vh] min-h-[360px] max-h-[600px] xl:h-full xl:min-h-0 xl:max-h-none">
+            <RagdollViewport
+              exercise={activeExercise}
+              isNightMode={isNightMode}
+            />
+          </div>
+          <div className="min-h-[220px] xl:min-h-0 xl:h-full border-t xl:border-t-0 xl:border-l border-slate-800">
+            <ExerciseReferenceVideo exercise={activeExercise} />
+          </div>
         </div>
       </div>
     </div>

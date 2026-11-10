@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { EXERCISE_CATEGORY_LABELS, ExerciseDef, MUSCLE_GROUP_LABELS, RoutineType } from '../types/workout';
+import { ExerciseReferenceVideo } from './ExerciseReferenceVideo';
 import { RagdollViewport } from '../three/RagdollViewport';
 import { soundSynthesizer } from '../services/soundSynthesizer';
 import { 
@@ -253,11 +254,16 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
       {/* Conteúdo Central Dividido: Viewport 3D + Painel Clínico Lateral */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Lado Esquerdo: Simulador Biomecânico Three.js */}
-        <div className="flex-1 h-[55vh] lg:h-full relative border-r border-slate-800">
-          <RagdollViewport
-            exercise={currentExercise}
-            isNightMode={isNightMode}
-          />
+        <div className="flex-[1.4] min-w-0 min-h-0 flex flex-col xl:flex-row overflow-y-auto xl:overflow-hidden">
+          <div className="flex-1 min-w-0 h-[55vh] min-h-[360px] xl:h-full xl:min-h-0">
+            <RagdollViewport
+              exercise={currentExercise}
+              isNightMode={isNightMode}
+            />
+          </div>
+          <div className="w-full h-[360px] min-h-[300px] xl:w-[360px] 2xl:w-[420px] xl:h-full xl:shrink-0 border-t xl:border-t-0 xl:border-l border-slate-800 overflow-y-auto">
+            <ExerciseReferenceVideo exercise={currentExercise} />
+          </div>
         </div>
 
         {/* Lado Direito: Painel de Controle de Séries, Cadência e Instruções */}

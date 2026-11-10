@@ -70,6 +70,8 @@ export interface ExerciseDef {
   safetyTips: string[];
   cameraPreset: 'front' | 'side' | 'isometric' | 'top';
   propType: 'mat' | 'chair' | 'towel' | 'wall' | 'pillow' | 'none';
+  videoId?: string;
+  videoStartSeconds?: number;
 }
 
 export interface WorkoutSessionLog {
