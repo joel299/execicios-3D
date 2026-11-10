@@ -56,9 +56,9 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
   const activeExercise = EXERCISE_DATABASE[selectedExerciseId] || allExercises[0];
 
   return (
-    <div className="w-full flex-1 flex flex-col lg:flex-row overflow-hidden bg-slate-950 text-slate-100">
+    <div className="w-full h-[calc(100vh-3.5rem)] min-h-0 flex flex-col lg:flex-row overflow-hidden bg-slate-950 text-slate-100">
       {/* Coluna da Esquerda: Catálogo Técnico de Exercícios */}
-      <div className="w-full lg:w-[480px] flex flex-col border-r border-slate-800 bg-slate-900/60 shrink-0 overflow-hidden">
+      <div className="w-full h-[42vh] lg:h-full lg:w-[480px] min-h-0 flex flex-col border-r border-slate-800 bg-slate-900/60 shrink-0 overflow-hidden">
         {/* Barra de Filtros e Busca */}
         <div className="p-4 border-b border-slate-800 space-y-3 bg-slate-950/80">
           <div className="relative">
@@ -165,7 +165,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
       </div>
 
       {/* Coluna da Direita: Inspetor 3D em Tempo Real do Exercício Selecionado */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-950">
+      <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden bg-slate-950">
         {/* Cabeçalho do Inspetor com Ações Rápidas */}
         <div className="p-4 border-b border-slate-800 bg-slate-900 flex items-center justify-between shrink-0">
           <div>
@@ -191,7 +191,7 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
         </div>
 
         {/* Viewport 3D do Exercício */}
-        <div className="flex-1 relative">
+        <div className="flex-1 min-h-0 relative">
           <RagdollViewport
             exercise={activeExercise}
             isNightMode={isNightMode}

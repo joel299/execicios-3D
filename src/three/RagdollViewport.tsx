@@ -39,13 +39,16 @@ type PoseBone = {
   source: THREE.Object3D;
   sourceRestWorld: THREE.Quaternion;
   targetRestWorld: THREE.Quaternion;
-  position: THREE.Vector3;
 };
 
-function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>, scale: number) {
+function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>) {
   POSE_BONES.forEach(([nodeName, boneName]) => {
     const target = bones.get(boneName);
     if (!target) return;
+    target.bone.parent?.updateWorldMatrix(true, false);
+    target.bone.position.copy(target.bone.parent?.worldToLocal(
+      target.source.getWorldPosition(new THREE.Vector3()),
+    ) ?? target.bone.position);
     const sourceWorld = target.source.getWorldQuaternion(new THREE.Quaternion());
     const worldDelta = sourceWorld.multiply(target.sourceRestWorld.clone().invert());
     const desiredWorld = worldDelta.multiply(target.targetRestWorld);
@@ -54,14 +57,6 @@ function applyExercisePose(ragdoll: RagdollNodes, bones: Map<string, PoseBone>, 
     target.bone.quaternion.copy(parentWorld.invert().multiply(desiredWorld));
     target.bone.updateWorldMatrix(false, true);
   });
-  const hips = bones.get('Hips');
-  if (hips) {
-    hips.bone.position.set(
-      hips.position.x + ragdoll.pelvis.position.x * scale,
-      hips.position.y + (ragdoll.pelvis.position.y - 0.98) * scale,
-      hips.position.z + ragdoll.pelvis.position.z * scale,
-    );
-  }
 }
 
 function disposeModel(root: THREE.Object3D) {
@@ -109,7 +104,6 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
   const propsRef = useRef<EnvironmentProps | null>(null);
   const poseBonesRef = useRef<Map<string, PoseBone>>(new Map());
   const modelLoadedRef = useRef(false);
-  const modelScaleRef = useRef(1);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const embeddedAnimationRef = useRef(false);
   const progressRef = useRef<number>(0);
@@ -129,7 +123,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
   useEffect(() => {
     exerciseIdRef.current = exercise.id;
     if (propsRef.current) {
-      propsRef.current.setPropVisibility(exercise.propType);
+      propsRef.current.setPropVisibility(exercise.propType, exercise.id);
     }
     // Ajusta preset sugerido
     handleCameraPreset(exercise.cameraPreset);
@@ -142,23 +136,22 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
 
     const camera = cameraRef.current;
     const controls = controlsRef.current;
+    const floorPose = exercise.propType === 'mat' || exercise.id === 'aperto_travesseiro' || exercise.id === 'drenagem_postural';
+    const targetHeight = floorPose ? 0.32 : 0.65;
+    controls.target.set(0, targetHeight, 0);
 
     switch (preset) {
       case 'front':
-        camera.position.set(0, 0.95, 2.4);
-        controls.target.set(0, 0.75, 0);
+        camera.position.set(0, targetHeight + 0.3, 2.4);
         break;
       case 'side':
-        camera.position.set(2.4, 0.85, 0);
-        controls.target.set(0, 0.65, 0);
+        camera.position.set(2.4, targetHeight + 0.2, 0);
         break;
       case 'isometric':
-        camera.position.set(1.9, 1.8, 1.9);
-        controls.target.set(0, 0.65, 0);
+        camera.position.set(1.9, targetHeight + 1.15, 1.9);
         break;
       case 'top':
-        camera.position.set(0, 2.8, 0.4);
-        controls.target.set(0, 0.2, 0);
+        camera.position.set(0, targetHeight + 2.15, 0.4);
         break;
     }
     controls.update();
@@ -298,7 +291,6 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
       const size = bounds.getSize(new THREE.Vector3());
       const center = bounds.getCenter(new THREE.Vector3());
       model.scale.setScalar(1.65 / size.y);
-      modelScaleRef.current = model.scale.x;
       model.position.set(-center.x * model.scale.x, -bounds.min.y * model.scale.y, -center.z * model.scale.z);
       scene.add(model);
       ragdoll.root.visible = false;
@@ -315,6 +307,24 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           object.skeleton.bones.forEach((bone) => availableBones.set(bone.name.replace(/^mixamorig:?/i, ''), bone));
         }
       });
+      // X Bot is exported in a T-pose; align its arm rest directions to the hanging demo rig.
+      for (const [sourceName, boneName, childSourceName, childBoneName] of [
+        ['leftClavicle', 'LeftArm', 'leftElbow', 'LeftForeArm'],
+        ['rightClavicle', 'RightArm', 'rightElbow', 'RightForeArm'],
+      ]) {
+        const source = ragdoll[sourceName as 'leftClavicle' | 'rightClavicle'];
+        const childSource = ragdoll[childSourceName as 'leftElbow' | 'rightElbow'];
+        const bone = availableBones.get(boneName);
+        const childBone = availableBones.get(childBoneName);
+        if (!bone || !childBone) continue;
+        const targetDirection = childBone.getWorldPosition(new THREE.Vector3()).sub(bone.getWorldPosition(new THREE.Vector3())).normalize();
+        const sourceDirection = childSource.getWorldPosition(new THREE.Vector3()).sub(source.getWorldPosition(new THREE.Vector3())).normalize();
+        const correction = new THREE.Quaternion().setFromUnitVectors(targetDirection, sourceDirection);
+        const world = bone.getWorldQuaternion(new THREE.Quaternion());
+        const parentWorld = bone.parent?.getWorldQuaternion(new THREE.Quaternion()) ?? new THREE.Quaternion();
+        bone.quaternion.copy(parentWorld.invert().multiply(correction.multiply(world)));
+        model.updateMatrixWorld(true);
+      }
       resetRagdollPose(ragdoll);
       ragdoll.root.updateMatrixWorld(true);
       model.updateMatrixWorld(true);
@@ -326,7 +336,6 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           source,
           sourceRestWorld: source.getWorldQuaternion(new THREE.Quaternion()),
           targetRestWorld: bone.getWorldQuaternion(new THREE.Quaternion()),
-          position: bone.position.clone(),
         }] as const] : [];
       }));
       const missingBones = POSE_BONES.filter(([, boneName]) => !poseBonesRef.current.has(boneName));
@@ -339,10 +348,8 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
         setModelError(true);
         return;
       }
-      const target = controls.target;
-      target.set(0, 0.82, 0);
       const direction = camera.position.clone().sub(controls.target).normalize();
-      camera.position.copy(target).addScaledVector(direction, 3.4);
+      camera.position.copy(controls.target).addScaledVector(direction, 3.4);
       controls.update();
       setIsModelLoaded(true);
       modelLoadedRef.current = true;
@@ -352,7 +359,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     const envProps = createEnvironmentProps();
     scene.add(envProps.root);
     propsRef.current = envProps;
-    envProps.setPropVisibility(exercise.propType);
+    envProps.setPropVisibility(exercise.propType, exercise.id);
 
     // 6. Loop de Renderização Contínuo e Paced
     let animationFrameId = 0;
@@ -377,7 +384,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
           progressRef.current,
           ragdollRef.current
         );
-        if (modelLoadedRef.current && !embeddedAnimationRef.current) applyExercisePose(ragdollRef.current, poseBonesRef.current, modelScaleRef.current);
+        if (modelLoadedRef.current && !embeddedAnimationRef.current) applyExercisePose(ragdollRef.current, poseBonesRef.current);
         if (now - lastUiUpdate >= 100) {
           setFrameEval(ev);
           setProgress(progressRef.current);
@@ -415,11 +422,14 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     };
 
     window.addEventListener('resize', handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(container);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       disposed = true;
       window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       controls.dispose();
       poseBonesRef.current.clear();
       mixerRef.current?.stopAllAction();
@@ -442,16 +452,17 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     setProgress(val);
     if (ragdollRef.current) {
       const ev = animateExercisePose(exerciseIdRef.current, val, ragdollRef.current);
+      if (modelLoadedRef.current && !embeddedAnimationRef.current) applyExercisePose(ragdollRef.current, poseBonesRef.current);
       setFrameEval(ev);
     }
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden bg-slate-950 select-none">
+    <div className="relative w-full h-full min-h-0 flex flex-col overflow-hidden bg-slate-950 select-none">
       {/* Viewport 3D Canvas Mount (100% Desobstruído) */}
       <div 
         ref={mountRef} 
-        className="w-full flex-1 relative cursor-grab active:cursor-grabbing focus:outline-none"
+        className="w-full flex-1 min-h-0 relative cursor-grab active:cursor-grabbing focus:outline-none"
       />
 
       {/* Goniômetro Clínico e Metadados (Top Overlay Discreto) */}

@@ -78,7 +78,7 @@ export interface EnvironmentProps {
   wall: THREE.Mesh;
   towel: THREE.Mesh;
   pillow: THREE.Mesh;
-  setPropVisibility: (propType: 'mat' | 'chair' | 'towel' | 'wall' | 'pillow' | 'none') => void;
+  setPropVisibility: (propType: 'mat' | 'chair' | 'towel' | 'wall' | 'pillow' | 'none', exerciseId?: string) => void;
 }
 
 // Gerador procedural de textura de veios de madeira natural (Zero 404s)
@@ -603,7 +603,7 @@ export function createEnvironmentProps(): EnvironmentProps {
     roughness: 0.9,
   });
   const wall = new THREE.Mesh(wallGeom, wallMat);
-  wall.position.set(0, 1.25, 0.48);
+  wall.position.set(0, 1.25, 0.18);
   wall.receiveShadow = true;
   root.add(wall);
 
@@ -615,7 +615,7 @@ export function createEnvironmentProps(): EnvironmentProps {
     roughness: 0.9,
   });
   const towel = new THREE.Mesh(towelGeom, towelMat);
-  towel.position.set(0.12, 0.055, 0.05);
+  towel.position.set(0.12, 0.055, 0.38);
   towel.castShadow = true;
   root.add(towel);
 
@@ -626,15 +626,17 @@ export function createEnvironmentProps(): EnvironmentProps {
     roughness: 0.9,
   });
   const pillow = new THREE.Mesh(pillowGeom, pillowMat);
-  pillow.position.set(0, 0.18, 0);
+  pillow.position.set(0, 0.38, 0.16);
   pillow.castShadow = true;
   root.add(pillow);
 
-  const setPropVisibility = (propType: 'mat' | 'chair' | 'towel' | 'wall' | 'pillow' | 'none') => {
-    mat.visible = propType === 'mat' || propType === 'towel' || propType === 'pillow';
+  const setPropVisibility = (propType: 'mat' | 'chair' | 'towel' | 'wall' | 'pillow' | 'none', exerciseId = '') => {
+    mat.visible = propType === 'mat' || propType === 'towel' || propType === 'pillow' || exerciseId === 'drenagem_postural';
     chair.visible = propType === 'chair';
     wall.visible = propType === 'wall';
+    wall.position.z = exerciseId === 'drenagem_postural' ? 0.48 : 0.18;
     towel.visible = propType === 'towel';
+    towel.position.z = exerciseId === 'alongamento_toalha_panturrilha' ? 0.86 : 0.38;
     pillow.visible = propType === 'pillow';
   };
 

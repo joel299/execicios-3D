@@ -18,6 +18,11 @@ function smoothstep(min: number, max: number, value: number): number {
   return x * x * (3 - 2 * x);
 }
 
+function supine(ragdoll: RagdollNodes, z = 0) {
+  ragdoll.pelvis.position.set(0, 0.20, z);
+  ragdoll.pelvis.rotation.x = -Math.PI / 2;
+}
+
 export function resetRagdollPose(ragdoll: RagdollNodes) {
   // Posição ereta padrão (em pé) do manequim clássico torneado
   ragdoll.pelvis.position.set(0, 0.98, 0);
@@ -98,10 +103,10 @@ export function animateExercisePose(
       ragdoll.spine.rotation.x = depth * 0.28;
 
       // Braços cruzados sobre o peito (segurança)
-      ragdoll.leftClavicle.rotation.x = -Math.PI / 2.5;
-      ragdoll.leftElbow.rotation.y = Math.PI / 2;
-      ragdoll.rightClavicle.rotation.x = -Math.PI / 2.5;
-      ragdoll.rightElbow.rotation.y = -Math.PI / 2;
+      ragdoll.leftClavicle.rotation.x = -0.7;
+      ragdoll.leftElbow.rotation.z = -Math.PI / 2;
+      ragdoll.rightClavicle.rotation.x = -0.7;
+      ragdoll.rightElbow.rotation.z = Math.PI / 2;
 
       primaryAngleDegrees = Math.round(depth * 88);
       break;
@@ -153,8 +158,7 @@ export function animateExercisePose(
     case 'slr_elevacao_perna': {
       primaryJointLabel = 'Elevação do Quadril';
       // Deitado em decúbito dorsal
-      ragdoll.pelvis.position.set(0, 0.10, 0);
-      ragdoll.pelvis.rotation.x = -Math.PI / 2; // deitado de costas
+      supine(ragdoll);
 
       // Perna esquerda flexionada para proteger lombar
       ragdoll.leftHip.rotation.x = -Math.PI / 3;
@@ -247,8 +251,7 @@ export function animateExercisePose(
     // 6. Ponte de Glúteo no Solo (Pelvic Lift)
     case 'ponte_gluteo': {
       primaryJointLabel = 'Extensão Pélvica';
-      ragdoll.pelvis.position.set(0, 0.10, 0);
-      ragdoll.pelvis.rotation.x = -Math.PI / 2; // Deitado
+      supine(ragdoll);
 
       // Pés apoiados firmes com joelhos dobrados
       ragdoll.leftHip.rotation.x = -Math.PI / 2.2;
@@ -347,8 +350,7 @@ export function animateExercisePose(
     case 'drenagem_postural': {
       primaryJointLabel = 'Bomba Muscular Venosa';
       // Deitado com pernas a 90 graus na parede
-      ragdoll.pelvis.position.set(0, 0.10, 0.38);
-      ragdoll.pelvis.rotation.x = -Math.PI / 2;
+      supine(ragdoll, -0.35);
 
       // Quadris flexionados a 90° na parede
       ragdoll.leftHip.rotation.x = -Math.PI / 2;
@@ -370,8 +372,7 @@ export function animateExercisePose(
     // 10. Aperto de Travesseiro (Adutores)
     case 'aperto_travesseiro': {
       primaryJointLabel = 'Compressão Isométrica Adutora';
-      ragdoll.pelvis.position.set(0, 0.10, 0);
-      ragdoll.pelvis.rotation.x = -Math.PI / 2;
+      supine(ragdoll);
 
       ragdoll.leftHip.rotation.x = -Math.PI / 2.3;
       ragdoll.leftKnee.rotation.x = Math.PI / 2.3;
@@ -399,13 +400,108 @@ export function animateExercisePose(
       break;
     }
 
+    case 'circulos_quadril': {
+      primaryJointLabel = 'Mobilidade do Quadril';
+      supine(ragdoll);
+      const circle = t * Math.PI * 2;
+      ragdoll.rightHip.rotation.x = -0.7 - Math.sin(circle) * 0.25;
+      ragdoll.rightHip.rotation.z = Math.cos(circle) * 0.35;
+      ragdoll.rightKnee.rotation.x = 1.0;
+      phaseLabel = 'Círculo controlado do quadril';
+      primaryAngleDegrees = Math.round(40 + Math.abs(Math.sin(circle)) * 20);
+      break;
+    }
+
+    case 'alongamento_toalha_panturrilha': {
+      primaryJointLabel = 'Alongamento da Panturrilha';
+      ragdoll.pelvis.position.set(0, 0.52, -0.12);
+      ragdoll.leftHip.rotation.x = -Math.PI / 2;
+      ragdoll.rightHip.rotation.x = -Math.PI / 2;
+      ragdoll.leftKnee.rotation.x = 0;
+      ragdoll.rightKnee.rotation.x = 0;
+      ragdoll.leftClavicle.rotation.x = -0.9;
+      ragdoll.rightClavicle.rotation.x = -0.9;
+      ragdoll.leftElbow.rotation.x = -0.7;
+      ragdoll.rightElbow.rotation.x = -0.7;
+      ragdoll.rightAnkle.rotation.x = -0.35;
+      phaseLabel = 'Puxada suave com a toalha';
+      primaryAngleDegrees = 30;
+      break;
+    }
+
+    case 'alongamento_isquiotibiais': {
+      primaryJointLabel = 'Alongamento Posterior da Coxa';
+      supine(ragdoll);
+      ragdoll.leftHip.rotation.x = -0.65;
+      ragdoll.leftKnee.rotation.x = 1.0;
+      ragdoll.rightHip.rotation.x = -0.8;
+      ragdoll.rightKnee.rotation.x = 0.1;
+      ragdoll.rightClavicle.rotation.x = -1.0;
+      ragdoll.leftClavicle.rotation.x = -1.0;
+      phaseLabel = 'Perna elevada e joelho estendido';
+      primaryAngleDegrees = 45;
+      break;
+    }
+
+    case 'respiracao_diafragmatica': {
+      primaryJointLabel = 'Respiração';
+      supine(ragdoll);
+      ragdoll.leftHip.rotation.x = -0.35;
+      ragdoll.rightHip.rotation.x = -0.35;
+      ragdoll.leftKnee.rotation.x = 0.7;
+      ragdoll.rightKnee.rotation.x = 0.7;
+      phaseLabel = 'Repouso deitado';
+      break;
+    }
+
+    case 'ponte_isometrica_baixa': {
+      primaryJointLabel = 'Extensão Pélvica';
+      supine(ragdoll);
+      ragdoll.leftHip.rotation.x = -0.65;
+      ragdoll.rightHip.rotation.x = -0.65;
+      ragdoll.leftKnee.rotation.x = 1.1;
+      ragdoll.rightKnee.rotation.x = 1.1;
+      const lift = t < 0.25 ? smoothstep(0, 0.25, t) * 0.1 : 0.1;
+      ragdoll.pelvis.position.y += lift;
+      phaseLabel = lift ? 'Sustentação da ponte baixa' : 'Preparação da ponte';
+      primaryAngleDegrees = Math.round(lift * 100);
+      isContracting = lift > 0;
+      break;
+    }
+
+    case 'alongamento_flexores_quadril': {
+      primaryJointLabel = 'Alongamento do Quadril';
+      supine(ragdoll);
+      ragdoll.leftHip.rotation.x = -0.9;
+      ragdoll.leftKnee.rotation.x = 1.1;
+      ragdoll.rightHip.rotation.x = 0.1;
+      ragdoll.rightKnee.rotation.x = 0;
+      ragdoll.leftClavicle.rotation.x = -0.8;
+      ragdoll.rightClavicle.rotation.x = -0.8;
+      phaseLabel = 'Joelho ao peito, outra perna estendida';
+      primaryAngleDegrees = 50;
+      break;
+    }
+
+    case 'postura_da_crianca': {
+      primaryJointLabel = 'Flexão de Quadril';
+      ragdoll.pelvis.position.set(0, 0.48, 0);
+      ragdoll.leftHip.rotation.x = -0.8;
+      ragdoll.rightHip.rotation.x = -0.8;
+      ragdoll.leftKnee.rotation.x = 1.2;
+      ragdoll.rightKnee.rotation.x = 1.2;
+      ragdoll.spine.rotation.x = 0.8;
+      ragdoll.leftClavicle.rotation.x = -1.0;
+      ragdoll.rightClavicle.rotation.x = -1.0;
+      phaseLabel = 'Ajoelhado com o tronco inclinado';
+      primaryAngleDegrees = 45;
+      break;
+    }
+
     // Padrão de repouso / outros exercícios
     default: {
-      primaryJointLabel = 'Movimento Suave';
-      phaseLabel = 'Alongamento & Descompressão';
-      const wave = Math.sin(t * Math.PI * 2) * 0.1;
-      ragdoll.rightKnee.rotation.x = Math.abs(wave);
-      primaryAngleDegrees = Math.round(Math.abs(wave) * 90);
+      primaryJointLabel = 'Posição de Repouso';
+      phaseLabel = 'Posição inicial';
       break;
     }
   }
