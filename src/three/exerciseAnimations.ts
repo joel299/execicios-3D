@@ -318,14 +318,14 @@ export function animateExercisePose(
     case 'abducao_deitado': {
       primaryJointLabel = 'Abdução do Glúteo Médio';
       // Deitado de lado (rotação no eixo Z)
-      ragdoll.root.rotation.z = Math.PI / 2;
-      ragdoll.root.position.set(0.98, 0.20, 0); // Deita de lado com o corpo apoiado no colchonete
+      ragdoll.root.rotation.z = -Math.PI / 2;
+      ragdoll.root.position.set(-0.98, 0.20, 0); // Cabeça no lado oposto e quadril centralizado no colchonete
       ragdoll.leftClavicle.rotation.x = 0.6;
       ragdoll.rightClavicle.rotation.x = 0.6;
 
-      // Perna de baixo (esquerda) levemente flexionada para estabilidade
-      ragdoll.leftHip.rotation.x = -0.3;
-      ragdoll.leftKnee.rotation.x = 0.4;
+      // Perna de baixo (direita) fixa no colchonete; a esquerda faz a elevação.
+      ragdoll.rightHip.rotation.x = -0.3;
+      ragdoll.rightKnee.rotation.x = 0.4;
 
       let abduct = 0;
       if (t < 1 / 3) {
@@ -341,9 +341,9 @@ export function animateExercisePose(
         phaseLabel = 'Descida Controlada (3s)';
       }
 
-      // Perna direita abduz no plano frontal (rotação em Z da perna)
-      ragdoll.rightHip.rotation.z = abduct * (Math.PI / 4); // 45 graus
-      ragdoll.rightKnee.rotation.x = 0; // joelho estendido
+      // A perna de cima abduz no plano frontal e permanece estendida.
+      ragdoll.leftHip.rotation.z = -abduct * (Math.PI / 4); // 45 graus
+      ragdoll.leftKnee.rotation.x = 0;
 
       primaryAngleDegrees = Math.round(abduct * 45);
       break;
