@@ -195,6 +195,7 @@ export function animateExercisePose(
     case 'tornozelo_alfabeto': {
       primaryJointLabel = 'Movimento do Tornozelo';
       // Sentado, com a perna de apoio no chão e a perna operada estendida.
+      ragdoll.root.position.y = 0.025;
       ragdoll.pelvis.position.set(0, 0.64, -0.28);
       ragdoll.leftHip.rotation.x = -Math.PI / 2.6;
       ragdoll.leftKnee.rotation.x = Math.PI / 2.6;
