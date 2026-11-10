@@ -323,9 +323,7 @@ export function animateExercisePose(
       ragdoll.leftClavicle.rotation.x = 0.6;
       ragdoll.rightClavicle.rotation.x = 0.6;
 
-      // Perna de baixo (direita) fixa no colchonete; a esquerda faz a elevação.
-      ragdoll.rightHip.rotation.x = -0.3;
-      ragdoll.rightKnee.rotation.x = 0.4;
+      // A perna indicada em vermelho fica estável; a indicada em verde se move.
 
       let abduct = 0;
       if (t < 1 / 3) {
@@ -341,9 +339,9 @@ export function animateExercisePose(
         phaseLabel = 'Descida Controlada (3s)';
       }
 
-      // A perna de cima abduz no plano frontal e permanece estendida.
-      ragdoll.leftHip.rotation.z = -abduct * (Math.PI / 4); // 45 graus
-      ragdoll.leftKnee.rotation.x = 0;
+      // A perna verde (direita) abduz; a vermelha (esquerda) permanece alinhada.
+      ragdoll.rightHip.rotation.z = -abduct * (Math.PI / 4); // 45 graus
+      ragdoll.rightKnee.rotation.x = 0;
 
       primaryAngleDegrees = Math.round(abduct * 45);
       break;
