@@ -193,26 +193,20 @@ export function animateExercisePose(
 
     // 4. Alfabeto com o Tornozelo
     case 'tornozelo_alfabeto': {
-      primaryJointLabel = 'Circunversão do Tornozelo';
-      // Sentado na cadeira
-      ragdoll.pelvis.position.set(0, 0.52, -0.28);
-      ragdoll.leftHip.rotation.x = -Math.PI / 2.2;
-      ragdoll.leftKnee.rotation.x = Math.PI / 2.2;
+      primaryJointLabel = 'Movimento do Tornozelo';
+      // Sentado, com a perna de apoio no chão e a perna operada estendida.
+      ragdoll.pelvis.position.set(0, 0.64, -0.28);
+      ragdoll.leftHip.rotation.x = -Math.PI / 2.6;
+      ragdoll.leftKnee.rotation.x = Math.PI / 2.6;
 
-      // Perna direita ligeiramente elevada do solo
-      ragdoll.rightHip.rotation.x = -Math.PI / 2.6;
-      ragdoll.rightKnee.rotation.x = Math.PI / 3.0;
+      ragdoll.rightHip.rotation.x = -Math.PI / 2;
+      ragdoll.rightKnee.rotation.x = 0;
 
-      // Movimento orbital do tornozelo simulando escrita das letras
-      const orbit = t * Math.PI * 4;
-      const angleX = Math.sin(orbit) * 0.35;
-      const angleY = Math.cos(orbit) * 0.30;
+      const angleX = Math.sin(t * Math.PI * 2) * 0.35;
       ragdoll.rightAnkle.rotation.x = angleX;
-      ragdoll.rightAnkle.rotation.y = angleY;
-      ragdoll.rightAnkle.rotation.z = Math.sin(orbit * 0.5) * 0.2;
 
-      phaseLabel = `Desenhando Letra (${Math.floor(t * 26) + 1} de 26)`;
-      primaryAngleDegrees = Math.round(Math.abs(angleX) * 90);
+      phaseLabel = angleX >= 0 ? 'Puxe o pé para cima' : 'Aponte o pé';
+      primaryAngleDegrees = Math.round(Math.abs(angleX) * (180 / Math.PI));
       isContracting = true;
       break;
     }
