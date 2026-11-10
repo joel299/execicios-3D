@@ -320,30 +320,32 @@ export function animateExercisePose(
       // Deitado de lado (rotação no eixo Z)
       ragdoll.root.rotation.z = Math.PI / 2;
       ragdoll.root.position.set(0.98, 0.20, 0); // Deita de lado com o corpo apoiado no colchonete
+      ragdoll.leftClavicle.rotation.x = 0.6;
+      ragdoll.rightClavicle.rotation.x = 0.6;
 
       // Perna de baixo (esquerda) levemente flexionada para estabilidade
       ragdoll.leftHip.rotation.x = -0.3;
       ragdoll.leftKnee.rotation.x = 0.4;
 
       let abduct = 0;
-      if (t < 0.4) {
-        abduct = smoothstep(0, 0.4, t);
+      if (t < 1 / 3) {
+        abduct = smoothstep(0, 1 / 3, t);
         phaseLabel = 'Elevação Lateral (2s)';
         isContracting = true;
-      } else if (t < 0.55) {
+      } else if (t < 0.5) {
         abduct = 1.0;
         phaseLabel = 'Pausa no Topo (1s)';
         isContracting = true;
       } else {
-        abduct = 1.0 - smoothstep(0.55, 1.0, t);
+        abduct = 1.0 - smoothstep(0.5, 1.0, t);
         phaseLabel = 'Descida Controlada (3s)';
       }
 
       // Perna direita abduz no plano frontal (rotação em Z da perna)
-      ragdoll.rightHip.rotation.z = abduct * (Math.PI / 4.2); // ~42 graus
+      ragdoll.rightHip.rotation.z = abduct * (Math.PI / 4); // 45 graus
       ragdoll.rightKnee.rotation.x = 0; // joelho estendido
 
-      primaryAngleDegrees = Math.round(abduct * 42);
+      primaryAngleDegrees = Math.round(abduct * 45);
       break;
     }
 
