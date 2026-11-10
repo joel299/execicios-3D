@@ -402,11 +402,13 @@ export function animateExercisePose(
       primaryJointLabel = 'Mobilidade do Quadril';
       supine(ragdoll);
       const circle = t * Math.PI * 2;
-      ragdoll.rightHip.rotation.x = -0.7 - Math.sin(circle) * 0.25;
-      ragdoll.rightHip.rotation.z = Math.cos(circle) * 0.35;
-      ragdoll.rightKnee.rotation.x = 1.0;
-      phaseLabel = 'Círculo controlado do quadril';
-      primaryAngleDegrees = Math.round(40 + Math.abs(Math.sin(circle)) * 20);
+      ragdoll.leftHip.rotation.x = -0.4;
+      ragdoll.leftKnee.rotation.x = 1.5;
+      ragdoll.rightHip.rotation.x = -0.7 - Math.cos(circle) * 0.18;
+      ragdoll.rightHip.rotation.z = 0.17 + Math.sin(circle) * 0.13;
+      ragdoll.rightKnee.rotation.x = 1.2;
+      phaseLabel = 'Círculos suaves com o joelho';
+      primaryAngleDegrees = Math.round(40 + Math.abs(Math.sin(circle)) * 10);
       break;
     }
 
