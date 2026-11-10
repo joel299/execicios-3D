@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ExerciseDef, RoutineType } from '../types/workout';
+import { EXERCISE_CATEGORY_LABELS, ExerciseDef, MUSCLE_GROUP_LABELS, RoutineType } from '../types/workout';
 import { RagdollViewport } from '../three/RagdollViewport';
 import { soundSynthesizer } from '../services/soundSynthesizer';
 import { 
@@ -265,7 +265,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
           {/* Cabeçalho do Exercício Ativo */}
           <div className="p-4 border-b border-slate-800 bg-slate-950/40">
             <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-1">
-              <span>Fase: {currentExercise.category.toUpperCase()}</span>
+              <span>Tipo: {EXERCISE_CATEGORY_LABELS[currentExercise.category]}</span>
               <span>{currentExercise.primaryJoint}</span>
             </div>
             <h2 className="text-lg font-bold text-slate-100 tracking-tight">
@@ -282,7 +282,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
               /* Tela de Descanso Entre Séries */
               <div className="p-4 bg-slate-950 border border-slate-800 flex flex-col items-center text-center">
                 <span className="text-xs font-mono text-slate-400 uppercase tracking-widest block mb-1">
-                  Intervalo de Recuperação Articular
+                  Pausa para descansar
                 </span>
                 <span className="text-4xl font-bold font-mono text-amber-400 tabular-nums">
                   {restSecondsRemaining}s
@@ -312,10 +312,10 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
 
                   <div className="bg-slate-950 p-2.5 border border-slate-800">
                     <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                      Volume da Série
+                      Nesta série
                     </span>
                     <span className="text-xl font-bold font-mono text-sky-400 tabular-nums">
-                      {currentExercise.volume.reps ? `${currentExercise.volume.reps} reps` : `${currentExercise.volume.durationSeconds || currentExercise.volume.holdSeconds}s`}
+                      {currentExercise.volume.reps ? `${currentExercise.volume.reps} repetições` : `${currentExercise.volume.durationSeconds || currentExercise.volume.holdSeconds}s`}
                     </span>
                   </div>
                 </div>
@@ -323,11 +323,11 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
                 {/* Marcador Visual de Cadência 3-1-2 */}
                 <div className="bg-slate-950 p-3 border border-slate-800">
                   <div className="flex items-center justify-between text-xs font-mono mb-2">
-                    <span className="text-slate-400">Cadência 3-1-2:</span>
+                    <span className="text-slate-400">Ritmo 3-1-2:</span>
                     <span className="font-semibold uppercase tracking-wider text-sky-300">
-                      {cadencePhase === 'descendo' && `Descendo (${cadenceSecond}s / 3s)`}
-                      {cadencePhase === 'isometria' && `Isometria (${cadenceSecond}s / 1s)`}
-                      {cadencePhase === 'subindo' && `Subindo (${cadenceSecond}s / 2s)`}
+                      {cadencePhase === 'descendo' && `Desça (${cadenceSecond}s / 3s)`}
+                      {cadencePhase === 'isometria' && `Segure (${cadenceSecond}s / 1s)`}
+                      {cadencePhase === 'subindo' && `Suba (${cadenceSecond}s / 2s)`}
                     </span>
                   </div>
 
@@ -393,7 +393,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
 
                 <div className="mt-4 pt-3 border-t border-slate-800">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-1">
-                    Dicas de Execução:
+                    Dicas para fazer o exercício:
                   </span>
                   <ul className="space-y-1.5 list-disc list-inside text-slate-400">
                     {currentExercise.safetyTips.map((tip, idx) => (
@@ -427,12 +427,12 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
               <div className="space-y-3">
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-2">
-                    Grupos Musculares Fortalecidos:
+                    Músculos que você vai usar:
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {currentExercise.targetMuscles.map((m) => (
                       <span key={m} className="px-2.5 py-1 bg-slate-950 border border-slate-800 text-sky-300 font-mono text-xs">
-                        {m.replace('_', ' ')}
+                        {MUSCLE_GROUP_LABELS[m]}
                       </span>
                     ))}
                   </div>
@@ -440,10 +440,10 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
 
                 <div className="pt-3 border-t border-slate-800 text-slate-400 space-y-1.5">
                   <p>
-                    <span className="text-slate-200 font-semibold">Articulação Principal:</span> {currentExercise.primaryJoint}
+                    <span className="text-slate-200 font-semibold">Parte trabalhada:</span> {currentExercise.primaryJoint}
                   </p>
                   <p>
-                    <span className="text-slate-200 font-semibold">Amplitude Alvo:</span> {currentExercise.targetAngleRange}
+                    <span className="text-slate-200 font-semibold">Movimento:</span> {currentExercise.targetAngleRange}
                   </p>
                 </div>
               </div>

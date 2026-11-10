@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { EXERCISE_DATABASE, MORNING_ROUTINE_IDS, NIGHT_ROUTINE_IDS } from '../data/exercises';
-import { ExerciseDef } from '../types/workout';
+import { EXERCISE_CATEGORY_LABELS, ExerciseDef } from '../types/workout';
 import { RagdollViewport } from '../three/RagdollViewport';
 import { 
   Play, 
@@ -132,10 +132,10 @@ export const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({
               >
                 <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1">
                   <span className="uppercase tracking-wider">
-                    {ex.category.replace('_', ' ')}
+                    {EXERCISE_CATEGORY_LABELS[ex.category]}
                   </span>
                   <span>
-                    {ex.volume.sets} séries · {ex.volume.reps ? `${ex.volume.reps} reps` : `${ex.volume.durationSeconds || ex.volume.holdSeconds}s`}
+                    {ex.volume.sets} séries · {ex.volume.reps ? `${ex.volume.reps} repetições` : `${ex.volume.durationSeconds || ex.volume.holdSeconds}s`}
                   </span>
                 </div>
 

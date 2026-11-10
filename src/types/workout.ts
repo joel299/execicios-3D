@@ -23,6 +23,26 @@ export type MuscleGroup =
   | 'tornozelo_tibial' 
   | 'core_lombar';
 
+export const MUSCLE_GROUP_LABELS: Record<MuscleGroup, string> = {
+  quadriceps: 'Frente da coxa',
+  isquiotibiais: 'Parte de trás da coxa',
+  gluteo_medio: 'Lado do quadril',
+  gluteo_maximo: 'Glúteos',
+  panturrilha: 'Panturrilha',
+  adutores: 'Parte interna da coxa',
+  tornozelo_tibial: 'Canela e tornozelo',
+  core_lombar: 'Abdômen e lombar',
+};
+
+export const EXERCISE_CATEGORY_LABELS: Record<ExerciseCategory, string> = {
+  aquecimento: 'Aquecimento',
+  fortalecimento: 'Fortalecimento',
+  volta_calma: 'Relaxamento',
+  drenagem: 'Circulação',
+  isometria: 'Manter a posição',
+  alongamento: 'Alongamento',
+};
+
 export interface ExerciseCadence {
   eccentric: number; // segundos descendo
   isometric: number; // segundos sustentando

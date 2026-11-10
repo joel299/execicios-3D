@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { ExerciseDef } from '../types/workout';
+import { ExerciseDef, MUSCLE_GROUP_LABELS } from '../types/workout';
 import { createBiomechanicalRagdoll, createEnvironmentProps, RagdollNodes, EnvironmentProps } from './ragdollModel';
 import { animateExercisePose, resetRagdollPose, FrameEvaluation } from './exerciseAnimations';
 import { 
@@ -591,12 +591,12 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
 
           {/* Cadência 3-1-2 descrita */}
           <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400">
-            <span>Cadência:</span>
-            <span className="text-sky-300">{exercise.cadence.eccentric}s Descendo</span>
+            <span>Ritmo:</span>
+            <span className="text-sky-300">Desça por {exercise.cadence.eccentric}s</span>
             <span>·</span>
-            <span className="text-amber-300">{exercise.cadence.isometric}s Isometria</span>
+            <span className="text-amber-300">Segure por {exercise.cadence.isometric}s</span>
             <span>·</span>
-            <span className="text-emerald-300">{exercise.cadence.concentric}s Subindo</span>
+            <span className="text-emerald-300">Suba por {exercise.cadence.concentric}s</span>
           </div>
 
           <button
@@ -635,7 +635,7 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
                 Sobre o movimento
               </span>
               <p className="text-slate-300 leading-relaxed">
-                {exercise.subtitle}. Foco em {exercise.targetMuscles.map(m => m.replace('_', ' ')).join(', ')}.
+                {exercise.subtitle}. Você vai usar: {exercise.targetMuscles.map(m => MUSCLE_GROUP_LABELS[m]).join(', ')}.
               </p>
             </div>
 
