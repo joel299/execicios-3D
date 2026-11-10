@@ -139,18 +139,19 @@ export const RagdollViewport: React.FC<RagdollViewportProps> = ({
     const camera = cameraRef.current;
     const controls = controlsRef.current;
     const floorPose = exercise.propType === 'mat' || exercise.id === 'aperto_travesseiro' || exercise.id === 'drenagem_postural';
-    const targetHeight = floorPose ? 0.32 : 0.65;
+    const targetHeight = floorPose ? 0.32 : exercise.id === 'dorsiflexao_parede' ? 0.8 : 0.65;
+    const wallExercise = exercise.id === 'dorsiflexao_parede';
     controls.target.set(0, targetHeight, 0);
 
     switch (preset) {
       case 'front':
-        camera.position.set(0, targetHeight + 0.3, 2.4);
+        camera.position.set(0, targetHeight + 0.3, wallExercise ? -2.4 : 2.4);
         break;
       case 'side':
-        camera.position.set(2.4, targetHeight + 0.2, 0);
+        camera.position.set(wallExercise ? -2.4 : 2.4, targetHeight + 0.2, 0);
         break;
       case 'isometric':
-        camera.position.set(1.9, targetHeight + 1.15, 1.9);
+        camera.position.set(wallExercise ? -1.9 : 1.9, targetHeight + 1.15, wallExercise ? -1.9 : 1.9);
         break;
       case 'top':
         camera.position.set(0, targetHeight + 2.15, 0.4);

@@ -597,7 +597,7 @@ export function createEnvironmentProps(): EnvironmentProps {
   root.add(chair);
 
   // 3. Parede para apoio / dorsiflexão
-  const wallGeom = new THREE.BoxGeometry(2.2, 2.5, 0.06);
+  const wallGeom = new THREE.BoxGeometry(0.9, 2.5, 0.06);
   const wallMat = new THREE.MeshStandardMaterial({
     color: 0x1e2638,
     roughness: 0.9,
@@ -634,7 +634,7 @@ export function createEnvironmentProps(): EnvironmentProps {
     mat.visible = propType === 'mat' || propType === 'towel' || propType === 'pillow' || exerciseId === 'drenagem_postural';
     chair.visible = propType === 'chair';
     wall.visible = propType === 'wall';
-    wall.position.z = exerciseId === 'drenagem_postural' ? 0.48 : 0.18;
+    wall.position.z = exerciseId === 'drenagem_postural' ? 0.48 : exerciseId === 'dorsiflexao_parede' ? 0.27 : 0.18;
     towel.visible = propType === 'towel';
     towel.position.z = exerciseId === 'alongamento_toalha_panturrilha' ? 0.86 : 0.38;
     pillow.visible = propType === 'pillow';

@@ -215,11 +215,14 @@ export function animateExercisePose(
     // 5. Dorsiflexão Assistida na Parede
     case 'dorsiflexao_parede': {
       primaryJointLabel = 'Ângulo de Dorsiflexão';
-      ragdoll.pelvis.position.set(0, 0.94, -0.05);
+      ragdoll.pelvis.position.set(0, 0.94, -0.35);
+      ragdoll.spine.rotation.x = 0.15;
 
       // Mãos apoiadas na parede à frente
-      ragdoll.leftClavicle.rotation.x = -Math.PI / 2.2;
-      ragdoll.rightClavicle.rotation.x = -Math.PI / 2.2;
+      ragdoll.leftClavicle.rotation.x = -0.55;
+      ragdoll.leftElbow.rotation.x = -0.35;
+      ragdoll.rightClavicle.rotation.x = -0.55;
+      ragdoll.rightElbow.rotation.x = -0.35;
 
       let advance = 0;
       if (t < 0.5) {
@@ -234,14 +237,13 @@ export function animateExercisePose(
         phaseLabel = 'Retorno Controlado (2s)';
       }
 
-      // Joelho direito avança para a frente sem levantar o calcanhar
-      ragdoll.rightKnee.rotation.x = advance * 0.45;
-      ragdoll.rightAnkle.rotation.x = -advance * 0.52; // ~30 graus de dorsiflexão
-      ragdoll.pelvis.position.z = -0.05 + advance * 0.18;
+      // O joelho avança enquanto o pé permanece plantado no mesmo lugar.
+      ragdoll.rightHip.rotation.x = -(0.8 + advance * 0.1);
+      ragdoll.rightKnee.rotation.x = 0.8 + advance * 0.173;
+      ragdoll.rightAnkle.rotation.x = -advance * 0.073;
 
       // Perna esquerda atrás como suporte
-      ragdoll.leftHip.rotation.x = 0.25;
-      ragdoll.leftKnee.rotation.x = 0.08;
+      ragdoll.leftHip.rotation.x = 0.1;
 
       primaryAngleDegrees = Math.round(advance * 32);
       break;
